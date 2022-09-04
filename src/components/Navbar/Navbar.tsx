@@ -12,7 +12,7 @@ import Button from "@mui/material/Button";
 import { ThemeProvider } from "@mui/material/styles";
 
 function Navbar() {
-  const [connectedFlag, setConnected] = useState(false);
+  const [connectedFlag, setConnected] = useState<boolean>(false);
 
   const connectWallet_TEMP = () => {
     setConnected(!connectedFlag);
