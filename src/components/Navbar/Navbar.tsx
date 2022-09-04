@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "./Navbar.css";
 import theme from "../../assets/RadioDAOTheme";
 
@@ -18,23 +19,25 @@ function Navbar() {
   };
 
   return (
-    <header className={`navbar-header`}>
+    <header>
       <Container fluid className="navbar-container">
         <Row>
           <Col className="left">
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                flexWrap: "wrap",
-              }}
-            >
-              <RadioIcon
-                fontSize="inherit"
-                style={{ paddingBottom: "7px", paddingRight: "10px" }}
-              />
-              <h1>RadioDAO</h1>
-            </div>
+            <Link to="/">
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                }}
+              >
+                <RadioIcon
+                  fontSize="inherit"
+                  style={{ paddingBottom: "7px", paddingRight: "10px" }}
+                />
+                <h1>RadioDAO</h1>
+              </div>
+            </Link>
           </Col>
           <Col className="middle">
             <div
@@ -43,9 +46,21 @@ function Navbar() {
                 flexWrap: "wrap",
               }}
             >
-              <li>Voting</li>
-              <li>Collection</li>
-              <li>Marketplace</li>
+              <Link to="/voting">
+                <li className="li-link">Voting</li>
+              </Link>
+
+              <li>|</li>
+
+              <Link to="/collection">
+                <li className="li-link">Collection</li>
+              </Link>
+
+              <li>|</li>
+
+              <Link to="/marketplace">
+                <li className="li-link">Marketplace</li>
+              </Link>
             </div>
           </Col>
           <Col className="right">

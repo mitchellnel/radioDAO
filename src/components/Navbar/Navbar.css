@@ -18,21 +18,29 @@
 
 header {
   background-color: #5506bf;
-  margin: auto -16px;
-  padding: 8px 32px;
+  margin: 0;
+  padding: 8px 8px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
-}
 
-.left h1 {
-  color: #e8bd30;
-  font-family: "Outfit";
-  font-size: 2.5rem;
-  font-weight: 600;
+  width: 100%;
 }
 
 .navbar-container .left {
   color: #e8bd30;
   font-size: 3rem;
+
+  text-align: left;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.left a {
+  color: #e8bd30;
+  text-decoration: none;
+}
+
+.left a:hover {
+  color: #d4af37;
 }
 
 .left h1 {
@@ -40,6 +48,10 @@ header {
   font-family: "Outfit";
   font-size: 2.5rem;
   font-weight: 600;
+}
+
+.left h1:hover {
+  color: #d4af37;
 }
 
 .navbar-container .middle {
@@ -58,6 +70,10 @@ header {
   margin: auto;
 
   padding: 10px;
+}
+
+.middle .li-link:hover {
+  color: #af9f6a;
 }
 
 .navbar-container .right {
