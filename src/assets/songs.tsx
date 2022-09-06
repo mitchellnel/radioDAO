@@ -10,13 +10,13 @@ const songs: Song[] = [
     title: "Campfire",
     artist: "extenz",
     imgSrc: "songs/imgs/Campfire.jpg",
-    src: "audio/Campfire.mp3",
+    src: "songs/audio/Campfire.mp3",
   },
   {
     title: "Summer Nights",
     artist: "LiQWYD",
-    imgSrc: "./imgs/Summer-Nights.jpg",
-    src: "./audio/Summer-Nights.mp3",
+    imgSrc: "songs/imgs/Summer-Nights.jpg",
+    src: "songs/audio/Summer-Nights.mp3",
   },
 ];
 
