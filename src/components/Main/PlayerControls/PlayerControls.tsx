@@ -1,18 +1,23 @@
 import React, { useState } from "react";
 import theme from "../../../assets/RadioDAOTheme";
 
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import PauseIcon from "@mui/icons-material/Pause";
-import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
-import SkipNextIcon from "@mui/icons-material/SkipNext";
+import { ThemeProvider } from "@mui/material";
 
-import { Avatar, IconButton, ThemeProvider } from "@mui/material";
+import PlayButton from "./Buttons/PlayButton";
+import PauseButton from "./Buttons/PauseButton";
+import PrevButton from "./Buttons/PrevButton";
+import NextButton from "./Buttons/NextButton";
 
-function PlayerControls() {
+interface PlayerControlsProps {
+  handlePlayPauseClick: Function;
+}
+
+function PlayerControls({ handlePlayPauseClick }: PlayerControlsProps) {
   const [isPlaying, setPlayingFlag] = useState<boolean>(false);
 
   const clickPlayPause = () => {
     setPlayingFlag(!isPlaying);
+    handlePlayPauseClick(!isPlaying);
   };
 
   const clickPrev = () => {
@@ -32,52 +37,15 @@ function PlayerControls() {
           margin: "480px auto",
         }}
       >
-        <IconButton aria-label="previous" color="secondary" onClick={clickPrev}>
-          <Avatar
-            sx={{
-              bgcolor: "secondary.main",
-              color: "primary.main",
-              height: 60,
-              width: 60,
-            }}
-          >
-            <SkipPreviousIcon sx={{ fontSize: "2.25rem" }} />
-          </Avatar>
-        </IconButton>
+        <PrevButton onClick={clickPrev} />
 
-        <IconButton
-          aria-label="play"
-          color="secondary"
-          onClick={clickPlayPause}
-        >
-          <Avatar
-            sx={{
-              bgcolor: "secondary.main",
-              color: "primary.main",
-              height: 80,
-              width: 80,
-            }}
-          >
-            {isPlaying ? (
-              <PauseIcon sx={{ fontSize: "3rem" }} />
-            ) : (
-              <PlayArrowIcon sx={{ fontSize: "3rem" }} />
-            )}
-          </Avatar>
-        </IconButton>
+        {isPlaying ? (
+          <PauseButton onClick={clickPlayPause} />
+        ) : (
+          <PlayButton onClick={clickPlayPause} />
+        )}
 
-        <IconButton aria-label="next" color="secondary" onClick={clickNext}>
-          <Avatar
-            sx={{
-              bgcolor: "secondary.main",
-              color: "primary.main",
-              height: 60,
-              width: 60,
-            }}
-          >
-            <SkipNextIcon sx={{ fontSize: "2.25rem" }} />
-          </Avatar>
-        </IconButton>
+        <NextButton onClick={clickNext} />
       </div>
     </ThemeProvider>
   );
