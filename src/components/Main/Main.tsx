@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Main.css";
 import theme from "../../assets/RadioDAOTheme";
 
@@ -14,6 +14,8 @@ import songs from "../../assets/songs";
 import useAudioPlayer from "../../hooks/useAudioplayer";
 
 function Main() {
+  const [sliderPosition, setSliderPosition] = useState<number>(0);
+
   const {
     playing,
     duration,
@@ -22,6 +24,8 @@ function Main() {
     setPlayingFlag,
     setClickedTime,
   } = useAudioPlayer();
+
+  useEffect(() => setSliderPosition(currentTime as number), [currentTime]);
 
   const title = songs[0].title;
   const artist = songs[0].artist;
@@ -39,14 +43,31 @@ function Main() {
         Your browser does not support the <code>audio</code> element.
       </audio>
 
-      <Container className="player-container" fluid>
+      <Container id="player-container" fluid>
         <Row id="player-row">
-          <Col className="player-art">
-            <PlayerArt artSrc={songs[0].imgSrc} />
+          <Col id="player-art">
+            <PlayerArt artSrc={imgSrc} />
           </Col>
-          <Col className="player-details-controls">
-            <PlayerDetails />
-            <PlayerControls handlePlayPauseClick={togglePlay} />
+          <Col id="player-details-controls">
+            <div
+              id="details"
+              style={{ display: "table", margin: "160px auto 0" }}
+            >
+              <PlayerDetails songTitle={title} artist={artist} />
+            </div>
+            <div
+              id="controls"
+              style={{
+                display: "table",
+                margin: "200px auto 0",
+              }}
+            >
+              <PlayerControls
+                sliderPosition={sliderPosition}
+                handlePlayPauseClick={togglePlay}
+                handleTimeUpdate={(time: number) => setClickedTime(time)}
+              />
+            </div>
           </Col>
         </Row>
       </Container>
