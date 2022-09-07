@@ -43,30 +43,37 @@ function Main() {
         Your browser does not support the <code>audio</code> element.
       </audio>
 
-      <Container id="player-container" fluid>
-        <Row id="player-row">
-          <Col id="player-art">
-            <PlayerArt artSrc={imgSrc} />
-          </Col>
-          <Col id="player-details-controls">
+      <Container fluid>
+        <Row>
+          <Col>
             <div
-              id="details"
-              style={{ display: "table", margin: "160px auto 0" }}
+              id="art"
+              style={{ display: "table", margin: "64px auto 0 120px" }}
             >
-              <PlayerDetails songTitle={title} artist={artist} />
+              <PlayerArt artSrc={imgSrc} />
             </div>
-            <div
-              id="controls"
-              style={{
-                display: "table",
-                margin: "200px auto 0",
-              }}
-            >
-              <PlayerControls
-                sliderPosition={sliderPosition}
-                handlePlayPauseClick={togglePlay}
-                handleTimeUpdate={(time: number) => setClickedTime(time)}
-              />
+          </Col>
+          <Col>
+            <div id="player-details-controls" style={{ marginRight: "80px" }}>
+              <div
+                id="details"
+                style={{ display: "table", margin: "160px auto 0" }}
+              >
+                <PlayerDetails songTitle={title} artist={artist} />
+              </div>
+              <div
+                id="controls"
+                style={{
+                  display: "table",
+                  margin: "200px auto 0",
+                }}
+              >
+                <PlayerControls
+                  sliderPosition={sliderPosition}
+                  handlePlayPauseClick={togglePlay}
+                  handleTimeUpdate={(time: number) => setClickedTime(time)}
+                />
+              </div>
             </div>
           </Col>
         </Row>
