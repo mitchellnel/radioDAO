@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import theme from "../../../assets/RadioDAOTheme";
-
-import { ThemeProvider } from "@mui/material";
 
 import PlayButton from "./Buttons/PlayButton";
 import PauseButton from "./Buttons/PauseButton";
@@ -38,7 +35,7 @@ function PlayerControls({
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <div id="slider" style={{ margin: "16px -56px" }}>
         <PlayerSlider
           duration={songDuration}
@@ -61,7 +58,7 @@ function PlayerControls({
         {/* TODO: remove for actual radio app */}
         <NextButton onClick={clickNext} />
       </div>
-    </ThemeProvider>
+    </>
   );
 }
 

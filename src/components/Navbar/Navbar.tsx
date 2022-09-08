@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
-import theme from "../../assets/RadioDAOTheme";
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -9,7 +8,6 @@ import Col from "react-bootstrap/Col";
 
 import RadioIcon from "@mui/icons-material/Radio";
 import Button from "@mui/material/Button";
-import { ThemeProvider } from "@mui/material/styles";
 
 function Navbar() {
   const [connectedFlag, setConnected] = useState<boolean>(false);
@@ -71,16 +69,14 @@ function Navbar() {
                 alignItems: "center",
               }}
             >
-              <ThemeProvider theme={theme}>
-                <Button
-                  className="connect-btn"
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => connectWallet_TEMP()}
-                >
-                  {connectedFlag ? "Disconnect" : "Connect"}
-                </Button>
-              </ThemeProvider>
+              <Button
+                className="connect-btn"
+                variant="contained"
+                color="secondary"
+                onClick={() => connectWallet_TEMP()}
+              >
+                {connectedFlag ? "Disconnect" : "Connect"}
+              </Button>
             </div>
           </Col>
         </Row>
