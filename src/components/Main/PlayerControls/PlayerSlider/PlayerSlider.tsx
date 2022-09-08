@@ -13,14 +13,26 @@ const TinyText = styled(Typography)({
 });
 
 interface PlayerSliderProps {
+  duration: number;
   currentTime: number;
   onTimeUpdate: Function;
 }
 
-function PlayerSlider({ currentTime, onTimeUpdate }: PlayerSliderProps) {
-  const duration = 244; // seconds
+function PlayerSlider({
+  duration,
+  currentTime,
+  onTimeUpdate,
+}: PlayerSliderProps) {
+  // if duration is NaN, just set to 0
+  if (Number.isNaN(duration)) {
+    duration = 0;
+  }
 
-  const [position, setPosition] = useState<number>(0);
+  // if currentTime is NaN, just set to 0
+  if (Number.isNaN(currentTime)) {
+    currentTime = 0;
+  }
+
   const [paused, setPaused] = useState<boolean>(false);
 
   function formatDuration(value: number) {
@@ -30,7 +42,6 @@ function PlayerSlider({ currentTime, onTimeUpdate }: PlayerSliderProps) {
   }
 
   const handleSliderChange = (_: any, value: number) => {
-    setPosition(value as number);
     onTimeUpdate(value as number);
   };
 
@@ -40,7 +51,7 @@ function PlayerSlider({ currentTime, onTimeUpdate }: PlayerSliderProps) {
         aria-label="timestamp"
         size="small"
         color="secondary"
-        value={position}
+        value={currentTime}
         min={0}
         max={duration}
         step={1}
@@ -55,10 +66,10 @@ function PlayerSlider({ currentTime, onTimeUpdate }: PlayerSliderProps) {
         }}
       >
         <TinyText sx={{ color: "secondary.main" }}>
-          {formatDuration(position)}
+          {formatDuration(currentTime)}
         </TinyText>
         <TinyText sx={{ color: "secondary.main" }}>
-          -{formatDuration(duration - position)}
+          -{formatDuration(duration - currentTime)}
         </TinyText>
       </Box>
     </div>

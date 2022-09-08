@@ -27,7 +27,7 @@ function Main() {
 
   useEffect(() => {
     console.log(currentTime);
-    setSliderPosition(currentTime as number);
+    setSliderPosition(Math.round(currentTime as number));
   }, [currentTime]);
 
   const title = songs[0].title;
@@ -72,6 +72,7 @@ function Main() {
                 }}
               >
                 <PlayerControls
+                  songDuration={Math.round(duration as number)}
                   sliderPosition={sliderPosition}
                   handlePlayPauseClick={togglePlay}
                   handleTimeUpdate={(time: number) => setClickedTime(time)}

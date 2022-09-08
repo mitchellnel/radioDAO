@@ -10,12 +10,14 @@ import NextButton from "./Buttons/NextButton";
 import PlayerSlider from "./PlayerSlider/PlayerSlider";
 
 interface PlayerControlsProps {
+  songDuration: number;
   sliderPosition: number;
   handlePlayPauseClick: Function;
   handleTimeUpdate: Function;
 }
 
 function PlayerControls({
+  songDuration,
   sliderPosition,
   handlePlayPauseClick,
   handleTimeUpdate,
@@ -39,6 +41,7 @@ function PlayerControls({
     <ThemeProvider theme={theme}>
       <div id="slider" style={{ margin: "16px -56px" }}>
         <PlayerSlider
+          duration={songDuration}
           currentTime={sliderPosition}
           onTimeUpdate={(time: number) => handleTimeUpdate(time)}
         />
