@@ -22,7 +22,7 @@ function useAudioPlayer() {
 
     // DOM listeners -- update React state on DOM events
     audio.addEventListener("loadeddata", setAudioData);
-    audio.addEventListener("timeUpdate", setAudioTime);
+    audio.addEventListener("timeupdate", setAudioTime);
 
     // React state listeners -- update DOM on React state changes
     playing ? audio.play() : audio.pause();
@@ -35,7 +35,7 @@ function useAudioPlayer() {
     // effect cleanup
     return () => {
       audio.removeEventListener("loadeddata", setAudioData);
-      audio.removeEventListener("timeUpdate", setAudioTime);
+      audio.removeEventListener("timeupdate", setAudioTime);
     };
   }, [playing, clickedTime, currentTime]);
 

@@ -25,7 +25,10 @@ function Main() {
     setClickedTime,
   } = useAudioPlayer();
 
-  useEffect(() => setSliderPosition(currentTime as number), [currentTime]);
+  useEffect(() => {
+    console.log(currentTime);
+    setSliderPosition(currentTime as number);
+  }, [currentTime]);
 
   const title = songs[0].title;
   const artist = songs[0].artist;
