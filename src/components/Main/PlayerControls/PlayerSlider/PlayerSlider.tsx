@@ -56,6 +56,27 @@ function PlayerSlider({
         max={duration}
         step={1}
         onChange={(_, value) => handleSliderChange(_, value as number)}
+        sx={{
+          "& .MuiSlider-thumb": {
+            width: 8,
+            height: 8,
+            transition: "0.3s cubic-bezier(.47,1.64,.41,.8)",
+            "&:before": {
+              boxShadow: "0 2px 12px 0 rgba(232, 189, 48, 0.4)",
+            },
+            "&:hover, &.Mui-focusVisible": {
+              boxShadow: `0px 0px 0px 8px ${"rgb(232 189 48 / 16%)"}`,
+            },
+            "&.Mui-active": {
+              width: 20,
+              height: 20,
+            },
+          },
+          "& .MuiSlider-rail": {
+            height: "3px",
+            opacity: 0.4,
+          },
+        }}
       />
       <Box
         sx={{
