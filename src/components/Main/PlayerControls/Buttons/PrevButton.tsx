@@ -5,7 +5,7 @@ import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import { Avatar, IconButton } from "@mui/material";
 
 interface PrevButtonProps {
-  onClick: Function;
+  onClick: () => void;
 }
 
 function PrevButton({ onClick }: PrevButtonProps) {

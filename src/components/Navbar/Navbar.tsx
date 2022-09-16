@@ -12,7 +12,7 @@ import Button from "@mui/material/Button";
 function Navbar() {
   const [connectedFlag, setConnected] = useState<boolean>(false);
 
-  const connectWallet_TEMP = () => {
+  const connectWallet_TEMP = (): void => {
     setConnected(!connectedFlag);
   };
 

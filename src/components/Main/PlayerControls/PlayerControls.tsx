@@ -10,10 +10,10 @@ interface PlayerControlsProps {
   currentlyPlaying: boolean;
   songDuration: number;
   sliderPosition: number;
-  handlePlayPauseClick: Function;
-  handleTimeUpdate: Function;
-  prevSong: Function;
-  nextSong: Function;
+  handlePlayPauseClick: (isPlaying: boolean) => void;
+  handleTimeUpdate: (newTime: number) => void;
+  prevSong: () => void;
+  nextSong: () => void;
 }
 
 function PlayerControls({

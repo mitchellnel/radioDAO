@@ -15,7 +15,7 @@ const TinyText = styled(Typography)({
 interface PlayerSliderProps {
   duration: number;
   currentTime: number;
-  onTimeUpdate: Function;
+  onTimeUpdate: (value: number) => void;
 }
 
 function PlayerSlider({
@@ -33,7 +33,7 @@ function PlayerSlider({
     currentTime = 0;
   }
 
-  const [paused, setPaused] = useState<boolean>(false);
+  // const [paused, setPaused] = useState<boolean>(false);
 
   function formatDuration(value: number) {
     const minute = Math.floor(value / 60);

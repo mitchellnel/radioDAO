@@ -2,10 +2,10 @@ import React from "react";
 
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
-import { alpha, Avatar, IconButton } from "@mui/material";
+import { Avatar, IconButton } from "@mui/material";
 
 interface PlayButtonProps {
-  onClick: Function;
+  onClick: () => void;
 }
 
 function PlayButton({ onClick }: PlayButtonProps) {

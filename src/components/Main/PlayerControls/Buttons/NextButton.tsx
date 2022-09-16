@@ -5,7 +5,7 @@ import SkipNextIcon from "@mui/icons-material/SkipNext";
 import { Avatar, IconButton } from "@mui/material";
 
 interface NextButtonProps {
-  onClick: Function;
+  onClick: () => void;
 }
 
 function NextButton({ onClick }: NextButtonProps) {

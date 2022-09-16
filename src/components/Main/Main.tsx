@@ -28,6 +28,7 @@ function Main() {
     playing,
     duration,
     currentTime,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     clickedTime,
     setPlayingFlag,
     setClickedTime,
@@ -38,15 +39,15 @@ function Main() {
     setSliderPosition(Math.round(currentTime as number));
   }, [currentTime]);
 
-  const togglePlay = (playSongFlag: boolean) => {
+  const togglePlay = (playSongFlag: boolean): void => {
     setPlayingFlag(playSongFlag);
   };
 
-  const prevSong = () => {
+  const prevSong = (): void => {
     setSongNumber(Math.abs((songNumber - 1) % songs.length));
   };
 
-  const nextSong = () => {
+  const nextSong = (): void => {
     setSongNumber(Math.abs((songNumber + 1) % songs.length));
   };
 

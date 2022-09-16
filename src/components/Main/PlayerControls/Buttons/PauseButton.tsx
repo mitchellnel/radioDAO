@@ -5,7 +5,7 @@ import PauseIcon from "@mui/icons-material/Pause";
 import { Avatar, IconButton } from "@mui/material";
 
 interface PauseButtonProps {
-  onClick: Function;
+  onClick: () => void;
 }
 
 function PauseButton({ onClick }: PauseButtonProps) {
