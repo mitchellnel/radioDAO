@@ -11,7 +11,7 @@ interface PlayerControlsProps {
   songDuration: number;
   sliderPosition: number;
   handlePlayPauseClick: (isPlaying: boolean) => void;
-  handleTimeUpdate: (newTime: number) => void;
+  handleTimeUpdate: (commitChange: boolean, newTime: number) => void;
   prevSong: () => void;
   nextSong: () => void;
 }
@@ -46,7 +46,9 @@ function PlayerControls({
         <PlayerSlider
           duration={songDuration}
           currentTime={sliderPosition}
-          onTimeUpdate={(time: number) => handleTimeUpdate(time)}
+          onTimeUpdate={(commitChange: boolean, time: number) =>
+            handleTimeUpdate(commitChange, time)
+          }
         />
       </div>
 

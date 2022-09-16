@@ -17,6 +17,7 @@ import useAudioPlayer from "../../hooks/useAudioplayer";
 
 function Main() {
   const [sliderPosition, setSliderPosition] = useState<number>(0);
+  const [isSliding, setSlidingFlag] = useState<boolean>(false);
 
   const [songNumber, setSongNumber] = useState<number>(0);
   const [title, setTitle] = useState<string>(songs[0].title);
@@ -36,8 +37,11 @@ function Main() {
 
   useEffect(() => {
     console.log(currentTime);
-    setSliderPosition(Math.round(currentTime as number));
-  }, [currentTime]);
+
+    if (!isSliding) {
+      setSliderPosition(Math.round(currentTime as number));
+    }
+  }, [currentTime, isSliding]);
 
   const togglePlay = (playSongFlag: boolean): void => {
     setPlayingFlag(playSongFlag);
@@ -49,6 +53,16 @@ function Main() {
 
   const nextSong = (): void => {
     setSongNumber(Math.abs((songNumber + 1) % songs.length));
+  };
+
+  const updateTime = (commitChange: boolean, newTime: number): void => {
+    if (commitChange) {
+      setClickedTime(newTime);
+      setSlidingFlag(false);
+    } else {
+      setSlidingFlag(true);
+      setSliderPosition(Math.round(newTime));
+    }
   };
 
   useEffect(() => {
@@ -104,7 +118,7 @@ function Main() {
                       songDuration={Math.round(duration as number)}
                       sliderPosition={sliderPosition}
                       handlePlayPauseClick={togglePlay}
-                      handleTimeUpdate={(time: number) => setClickedTime(time)}
+                      handleTimeUpdate={updateTime}
                       prevSong={prevSong}
                       nextSong={nextSong}
                     />

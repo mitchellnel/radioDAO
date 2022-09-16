@@ -15,7 +15,7 @@ const TinyText = styled(Typography)({
 interface PlayerSliderProps {
   duration: number;
   currentTime: number;
-  onTimeUpdate: (value: number) => void;
+  onTimeUpdate: (commitChange: boolean, value: number) => void;
 }
 
 function PlayerSlider({
@@ -41,8 +41,8 @@ function PlayerSlider({
     return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
   }
 
-  const handleSliderChange = (_: any, value: number) => {
-    onTimeUpdate(value as number);
+  const handleSliderChange = (commitChange: boolean, value: number) => {
+    onTimeUpdate(commitChange, value);
   };
 
   return (
@@ -55,7 +55,10 @@ function PlayerSlider({
         min={0}
         max={duration}
         step={1}
-        onChange={(_, value) => handleSliderChange(_, value as number)}
+        onChange={(_, value) => handleSliderChange(false, value as number)}
+        onChangeCommitted={(_, value) =>
+          handleSliderChange(true, value as number)
+        }
         sx={{
           "& .MuiSlider-thumb": {
             width: 8,
