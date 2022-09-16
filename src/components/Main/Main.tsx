@@ -42,6 +42,22 @@ function Main() {
     setPlayingFlag(playSongFlag);
   };
 
+  const prevSong = () => {
+    setSongNumber(Math.abs((songNumber - 1) % songs.length));
+  };
+
+  const nextSong = () => {
+    setSongNumber(Math.abs((songNumber + 1) % songs.length));
+  };
+
+  useEffect(() => {
+    console.log("songNumber: ", songNumber);
+    setTitle(songs[songNumber].title);
+    setArtist(songs[songNumber].artist);
+    setImgSrc(songs[songNumber].imgSrc);
+    setSongSrc(songs[songNumber].src);
+  }, [songNumber]);
+
   return (
     <div className="player-div">
       <DynamicAudio songSrc={songSrc} />
@@ -55,21 +71,6 @@ function Main() {
       <SwitchTransition>
         <CSSTransition
           key={title}
-          onExiting={() => {
-            if (songNumber === 0) {
-              setSongNumber(1);
-              setTitle(songs[1].title);
-              setArtist(songs[1].artist);
-              setImgSrc(songs[1].imgSrc);
-              setSongSrc(songs[1].src);
-            } else {
-              setSongNumber(0);
-              setTitle(songs[0].title);
-              setArtist(songs[0].artist);
-              setImgSrc(songs[0].imgSrc);
-              setSongSrc(songs[0].src);
-            }
-          }}
           addEndListener={(node, done) =>
             node.addEventListener("transitionend", done, false)
           }
@@ -109,6 +110,8 @@ function Main() {
                       sliderPosition={sliderPosition}
                       handlePlayPauseClick={togglePlay}
                       handleTimeUpdate={(time: number) => setClickedTime(time)}
+                      prevSong={prevSong}
+                      nextSong={nextSong}
                     />
                   </div>
                 </div>

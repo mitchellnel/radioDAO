@@ -12,6 +12,8 @@ interface PlayerControlsProps {
   sliderPosition: number;
   handlePlayPauseClick: Function;
   handleTimeUpdate: Function;
+  prevSong: Function;
+  nextSong: Function;
 }
 
 function PlayerControls({
@@ -20,6 +22,8 @@ function PlayerControls({
   sliderPosition,
   handlePlayPauseClick,
   handleTimeUpdate,
+  prevSong,
+  nextSong,
 }: PlayerControlsProps) {
   const [isPlaying, setPlayingFlag] = useState<boolean>(currentlyPlaying);
 
@@ -29,11 +33,11 @@ function PlayerControls({
   };
 
   const clickPrev = () => {
-    console.log("Previous clicked!");
+    prevSong();
   };
 
   const clickNext = () => {
-    console.log("Next clicked!");
+    nextSong();
   };
 
   return (
