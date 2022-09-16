@@ -16,7 +16,6 @@ import songs from "../../assets/songs";
 import useAudioPlayer from "../../hooks/useAudioplayer";
 
 function Main() {
-  const [fadeState, setFadeState] = useState<boolean>(false);
   const [sliderPosition, setSliderPosition] = useState<number>(0);
 
   const [songNumber, setSongNumber] = useState<number>(0);
@@ -105,6 +104,7 @@ function Main() {
                     }}
                   >
                     <PlayerControls
+                      currentlyPlaying={playing as boolean}
                       songDuration={Math.round(duration as number)}
                       sliderPosition={sliderPosition}
                       handlePlayPauseClick={togglePlay}

@@ -7,6 +7,7 @@ import NextButton from "./Buttons/NextButton";
 import PlayerSlider from "./PlayerSlider/PlayerSlider";
 
 interface PlayerControlsProps {
+  currentlyPlaying: boolean;
   songDuration: number;
   sliderPosition: number;
   handlePlayPauseClick: Function;
@@ -14,12 +15,13 @@ interface PlayerControlsProps {
 }
 
 function PlayerControls({
+  currentlyPlaying,
   songDuration,
   sliderPosition,
   handlePlayPauseClick,
   handleTimeUpdate,
 }: PlayerControlsProps) {
-  const [isPlaying, setPlayingFlag] = useState<boolean>(false);
+  const [isPlaying, setPlayingFlag] = useState<boolean>(currentlyPlaying);
 
   const clickPlayPause = () => {
     setPlayingFlag(!isPlaying);
