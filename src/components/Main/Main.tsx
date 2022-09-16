@@ -62,12 +62,6 @@ function Main() {
     <div className="player-div">
       <DynamicAudio songSrc={songSrc} />
 
-      <button
-        onClick={() =>
-          setTitle(title === "Campfire" ? "Summer Nights" : "Campfire")
-        }
-      />
-
       <SwitchTransition>
         <CSSTransition
           key={title}
