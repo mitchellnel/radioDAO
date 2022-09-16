@@ -29,9 +29,10 @@ function Navbar() {
                   flexWrap: "wrap",
                 }}
               >
+                {/* TODO: this doesn't seem to be centered perfectly in the Navbar */}
                 <RadioIcon
                   fontSize="inherit"
-                  style={{ paddingBottom: "7px", paddingRight: "10px" }}
+                  style={{ paddingBottom: "10px", paddingRight: "10px" }}
                 />
                 <h1>RadioDAO</h1>
               </div>
