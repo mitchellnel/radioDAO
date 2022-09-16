@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 function useAudioPlayer() {
   const [playing, setPlayingFlag] = useState<boolean>();
+  const [muted, setMutedFlag] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>();
   const [currentTime, setCurrentTime] = useState<number>();
   const [clickedTime, setClickedTime] = useState<number>();
@@ -27,6 +28,8 @@ function useAudioPlayer() {
     // React state listeners -- update DOM on React state changes
     playing ? audio.play() : audio.pause();
 
+    muted ? (audio.muted = true) : (audio.muted = false);
+
     if (clickedTime && clickedTime !== currentTime) {
       audio.currentTime = clickedTime;
       setClickedTime(0);
@@ -41,38 +44,14 @@ function useAudioPlayer() {
 
   return {
     playing,
+    muted,
     duration,
     currentTime,
     clickedTime,
     setPlayingFlag,
+    setMutedFlag,
     setClickedTime,
   };
 }
 
 export default useAudioPlayer;
-
-//     // React state listeners: update DOM on React state changes
-//     playing ? audio.play() : audio.pause();
-
-//     if (clickedTime && clickedTime !== curTime) {
-//       audio.currentTime = clickedTime;
-//       setClickedTime(null);
-//     }
-
-//     // effect cleanup
-//     return () => {
-//       audio.removeEventListener("loadeddata", setAudioData);
-//       audio.removeEventListener("timeupdate", setAudioTime);
-//     };
-//   });
-
-//   return {
-//     curTime,
-//     duration,
-//     playing,
-//     setPlaying,
-//     setClickedTime,
-//   };
-// }
-
-// export default useAudioPlayer;
