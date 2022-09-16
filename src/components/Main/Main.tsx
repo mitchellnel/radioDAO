@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "./Main.css";
-import theme from "../../assets/RadioDAOTheme";
 
 import PlayerArt from "./PlayerArt/PlayerArt";
 import PlayerDetails from "./PlayerDetails/PlayerDetails";
@@ -60,7 +59,7 @@ function Main() {
             <div id="player-details-controls" style={{ marginRight: "80px" }}>
               <div
                 id="details"
-                style={{ display: "table", margin: "160px auto 0" }}
+                style={{ display: "table", margin: "264px auto 0" }}
               >
                 <PlayerDetails songTitle={title} artist={artist} />
               </div>
@@ -68,7 +67,7 @@ function Main() {
                 id="controls"
                 style={{
                   display: "table",
-                  margin: "200px auto 0",
+                  margin: "80px auto 0",
                 }}
               >
                 <PlayerControls
