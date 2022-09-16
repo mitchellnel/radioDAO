@@ -51,11 +51,15 @@ function Main() {
   };
 
   const prevSong = (): void => {
-    setSongNumber(Math.abs((songNumber - 1) % songs.length));
+    if (songNumber === 0) {
+      setSongNumber(15);
+    } else {
+      setSongNumber((songNumber - 1) % songs.length);
+    }
   };
 
   const nextSong = (): void => {
-    setSongNumber(Math.abs((songNumber + 1) % songs.length));
+    setSongNumber((songNumber + 1) % songs.length);
   };
 
   const updateTime = (commitChange: boolean, newTime: number): void => {
