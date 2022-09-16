@@ -12,7 +12,9 @@ function PlayerDetails({ songTitle, artist }: PlayerDetailsProps) {
       <h1 id="song-title">{songTitle}</h1>
 
       {/* TODO: get a lower weight Outfit font for h2 */}
-      <h2 id="artist">{artist}</h2>
+      <h2 id="artist" style={{ marginTop: "24px" }}>
+        {artist}
+      </h2>
     </div>
   );
 }
