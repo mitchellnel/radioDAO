@@ -13,6 +13,7 @@ import Col from "react-bootstrap/Col";
 import { SwitchTransition, CSSTransition } from "react-transition-group";
 
 import songs from "../../assets/songs";
+import { Song } from "../../assets/songs";
 import useAudioPlayer from "../../hooks/useAudioplayer";
 
 function Main() {
@@ -20,10 +21,7 @@ function Main() {
   const [isSliding, setSlidingFlag] = useState<boolean>(false);
 
   const [songNumber, setSongNumber] = useState<number>(0);
-  const [title, setTitle] = useState<string>(songs[0].title);
-  const [artist, setArtist] = useState<string>(songs[0].artist);
-  const [imgSrc, setImgSrc] = useState<string>(songs[0].imgSrc);
-  const [songSrc, setSongSrc] = useState<string>(songs[0].src);
+  const [song, setSong] = useState<Song>(songs[0]);
 
   const {
     playing,
@@ -78,19 +76,24 @@ function Main() {
 
   useEffect(() => {
     console.log("songNumber: ", songNumber);
-    setTitle(songs[songNumber].title);
-    setArtist(songs[songNumber].artist);
-    setImgSrc(songs[songNumber].imgSrc);
-    setSongSrc(songs[songNumber].src);
+
+    const nextSong: Song = {
+      title: songs[songNumber].title,
+      artist: songs[songNumber].artist,
+      imgSrc: songs[songNumber].imgSrc,
+      src: songs[songNumber].src,
+    };
+
+    setSong(nextSong);
   }, [songNumber]);
 
   return (
     <div className="player-div">
-      <DynamicAudio songSrc={songSrc} />
+      <DynamicAudio songSrc={song.src} />
 
       <SwitchTransition>
         <CSSTransition
-          key={title}
+          key={song.title + " -- " + song.artist}
           addEndListener={(node, done) =>
             node.addEventListener("transitionend", done, false)
           }
@@ -103,7 +106,7 @@ function Main() {
                   id="art"
                   style={{ display: "table", margin: "64px auto 0 120px" }}
                 >
-                  <PlayerArt artSrc={imgSrc} />
+                  <PlayerArt artSrc={song.imgSrc} />
                 </div>
               </Col>
               <Col>
@@ -115,7 +118,10 @@ function Main() {
                     id="details"
                     style={{ display: "table", margin: "264px auto 0" }}
                   >
-                    <PlayerDetails songTitle={title} artist={artist} />
+                    <PlayerDetails
+                      songTitle={song.title}
+                      artist={song.artist}
+                    />
                   </div>
                   <div
                     id="controls"

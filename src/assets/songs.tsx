@@ -1,7 +1,7 @@
 interface Song {
   title: string;
   artist: string;
-  imgSrc: string; // relative to the PlayerArt.tsx file's location (for now)
+  imgSrc: string; // relative to public/
   src: string;
 }
 
@@ -103,5 +103,7 @@ const songs: Song[] = [
     src: "songs/audio/Utopia.mp3",
   },
 ];
+
+export type { Song };
 
 export default songs;
