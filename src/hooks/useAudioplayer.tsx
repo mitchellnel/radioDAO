@@ -40,7 +40,7 @@ function useAudioPlayer() {
       audio.removeEventListener("loadeddata", setAudioData);
       audio.removeEventListener("timeupdate", setAudioTime);
     };
-  }, [playing, clickedTime, currentTime]);
+  }, [playing, muted, clickedTime, currentTime]);
 
   return {
     playing,

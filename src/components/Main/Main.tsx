@@ -27,6 +27,7 @@ function Main() {
 
   const {
     playing,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     muted,
     duration,
     currentTime,
