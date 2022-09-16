@@ -27,11 +27,13 @@ function Main() {
 
   const {
     playing,
+    muted,
     duration,
     currentTime,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     clickedTime,
     setPlayingFlag,
+    setMutedFlag,
     setClickedTime,
   } = useAudioPlayer();
 
@@ -63,6 +65,10 @@ function Main() {
       setSlidingFlag(true);
       setSliderPosition(Math.round(newTime));
     }
+  };
+
+  const toggleMute = (muteSongFlag: boolean): void => {
+    setMutedFlag(muteSongFlag);
   };
 
   useEffect(() => {
@@ -121,6 +127,7 @@ function Main() {
                       handleTimeUpdate={updateTime}
                       prevSong={prevSong}
                       nextSong={nextSong}
+                      handleMuteClick={toggleMute}
                     />
                   </div>
                 </div>

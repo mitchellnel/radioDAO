@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import "./PlayerControls.css";
 
+import PlayerSlider from "./PlayerSlider/PlayerSlider";
 import PlayButton from "./Buttons/PlayButton";
 import PauseButton from "./Buttons/PauseButton";
 import PrevButton from "./Buttons/PrevButton";
 import NextButton from "./Buttons/NextButton";
-import PlayerSlider from "./PlayerSlider/PlayerSlider";
+import MuteButton from "./Buttons/MuteButton";
+import UnmuteButton from "./Buttons/UnmuteButton";
 
 interface PlayerControlsProps {
   currentlyPlaying: boolean;
@@ -14,6 +17,7 @@ interface PlayerControlsProps {
   handleTimeUpdate: (commitChange: boolean, newTime: number) => void;
   prevSong: () => void;
   nextSong: () => void;
+  handleMuteClick: (isMuted: boolean) => void;
 }
 
 function PlayerControls({
@@ -24,8 +28,10 @@ function PlayerControls({
   handleTimeUpdate,
   prevSong,
   nextSong,
+  handleMuteClick,
 }: PlayerControlsProps) {
   const [isPlaying, setPlayingFlag] = useState<boolean>(currentlyPlaying);
+  const [isMuted, setMutedFlag] = useState<boolean>(false);
 
   const clickPlayPause = () => {
     setPlayingFlag(!isPlaying);
@@ -40,6 +46,11 @@ function PlayerControls({
     nextSong();
   };
 
+  const clickMute = () => {
+    setMutedFlag(!isMuted);
+    handleMuteClick(!isMuted);
+  };
+
   return (
     <>
       <div id="slider" style={{ margin: "16px -56px" }}>
@@ -52,7 +63,7 @@ function PlayerControls({
         />
       </div>
 
-      <div id="buttons">
+      <div id="control-buttons">
         {/* TODO: remove for actual radio app */}
         <PrevButton onClick={clickPrev} />
 
@@ -65,6 +76,14 @@ function PlayerControls({
 
         {/* TODO: remove for actual radio app */}
         <NextButton onClick={clickNext} />
+      </div>
+
+      <div id="mute-button">
+        {isMuted ? (
+          <UnmuteButton onClick={clickMute} />
+        ) : (
+          <MuteButton onClick={clickMute} />
+        )}
       </div>
     </>
   );
