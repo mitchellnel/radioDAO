@@ -1,0 +1,94 @@
+/* outfit-600 - latin */
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 600;
+  src: url("../../fonts/outfit-v6-latin/outfit-v6-latin-600.eot"); /* IE9 Compat Modes */
+  src: local(""),
+    url("../../fonts/outfit-v6-latin/outfit-v6-latin-600.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("../../fonts/outfit-v6-latin/outfit-v6-latin-600.woff2")
+      format("woff2"),
+    /* Super Modern Browsers */
+      url("../../fonts/outfit-v6-latin/outfit-v6-latin-600.woff") format("woff"),
+    /* Modern Browsers */
+      url("../../fonts/outfit-v6-latin/outfit-v6-latin-600.ttf")
+      format("truetype"),
+    /* Safari, Android, iOS */
+      url("../../fonts/outfit-v6-latin/outfit-v6-latin-600.svg#Outfit")
+      format("svg"); /* Legacy iOS */
+}
+
+header {
+  background-color: #5506bf;
+  margin: 0;
+  padding: 10px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+
+  width: 100%;
+}
+
+.navbar-container .left {
+  color: #e8bd30;
+  font-size: 3rem;
+
+  text-align: left;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.left a {
+  color: #e8bd30;
+  text-decoration: none;
+}
+
+.left a:hover {
+  color: #d4af37;
+}
+
+.left h1 {
+  color: #e8bd30;
+  font-family: "Outfit";
+  font-size: 2.5rem;
+  font-weight: 600;
+}
+
+.left h1:hover {
+  color: #d4af37;
+}
+
+.navbar-container .middle {
+  text-align: center;
+}
+
+.middle li {
+  color: #d4af37;
+  font-family: "Outfit";
+  font-size: 1.5rem;
+  font-weight: 200;
+
+  list-style: none;
+  display: inline-block;
+
+  margin: auto;
+
+  padding: 10px;
+}
+
+.middle .li-link:hover {
+  color: #af9f6a;
+}
+
+.navbar-container .right {
+  text-align: right;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.right .connect-btn {
+  height: 93%;
+  font-family: "Outfit";
+  font-size: 1rem;
+  font-weight: 600;
+  width: 25%;
+}
