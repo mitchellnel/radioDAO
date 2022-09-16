@@ -14,6 +14,7 @@ function PrevButton({ onClick }: PrevButtonProps) {
       aria-label="previous"
       color="secondary"
       onClick={() => onClick()}
+      sx={{ "&:hover": { backgroundColor: "rgb(232, 189, 48, 0.4)" } }}
     >
       <Avatar
         sx={{

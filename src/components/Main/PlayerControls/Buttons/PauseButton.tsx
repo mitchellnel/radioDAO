@@ -10,7 +10,12 @@ interface PauseButtonProps {
 
 function PauseButton({ onClick }: PauseButtonProps) {
   return (
-    <IconButton aria-label="play" color="secondary" onClick={() => onClick()}>
+    <IconButton
+      aria-label="play"
+      color="secondary"
+      onClick={() => onClick()}
+      sx={{ "&:hover": { backgroundColor: "rgb(232, 189, 48, 0.4)" } }}
+    >
       <Avatar
         sx={{
           bgcolor: "secondary.main",
