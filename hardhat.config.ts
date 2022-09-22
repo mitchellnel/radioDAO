@@ -20,6 +20,7 @@ const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 const PINATA_API_KEY = process.env.PINATA_API_KEY || "";
 const PINATA_API_SECRET = process.env.PINATA_API_SECRET || "";
 
+/** @type import('hardhat/config').HardhatUserConfig */
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [{ version: "0.8.17" }],
