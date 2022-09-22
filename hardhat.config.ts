@@ -4,7 +4,8 @@ import "hardhat-gas-reporter";
 
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomiclabs/hardhat-waffle";
-import "@@nomiclabs/hardhat-etherscan";
+import "@nomiclabs/hardhat-etherscan";
+import "@nomiclabs/hardhat-ethers";
 
 import * as dotenv from "dotenv";
 dotenv.config();
