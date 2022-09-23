@@ -75,19 +75,17 @@ import { developmentChains, networkConfig } from "../helper-hardhat-config";
           it("Should revert with the RangeOutOfBounds error if getTokenURI is called with an out of bounds index", async () => {
             const { rdioNFT } = await loadFixture(deployNFTContractFixture);
 
-            // await expect(rdioNFT.getTokenURI(-5)).to.be.revertedWith(
-            //   "RangeOutOfBounds"
-            // );
-
             await expect(rdioNFT.getTokenURI(21)).to.be.revertedWith(
-              "RangeOutOfBounds"
+              "Requested token URI index not within bounds."
             );
           });
 
           it("Shouldn't revert if getTokenURI is called with an in bounds index", async () => {
-            const { rdioNFT } = await loadFixture(deployNFTContractFixture);
+            const { rdioNFT, URIs } = await loadFixture(
+              deployNFTContractFixture
+            );
 
-            await expect(rdioNFT.getTokenURI(3)).not.to.be.reverted;
+            expect(await rdioNFT.getTokenURI(3)).to.equal(URIs[3]);
           });
         });
       });
@@ -99,7 +97,7 @@ import { developmentChains, networkConfig } from "../helper-hardhat-config";
               deployNFTContractFixture
             );
 
-            await expect(rdioNFT.mintNFT())
+            expect(await rdioNFT.mintNFT())
               .to.emit(rdioNFT, "NFTMinted")
               .withArgs(owner.address, 0)
               .to.emit(rdioNFT, "NFTTokenURISet")
