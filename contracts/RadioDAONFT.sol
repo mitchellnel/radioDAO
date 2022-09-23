@@ -16,7 +16,7 @@ contract RadioDAONFT is ERC721URIStorage, Ownable {
 
     // Contract Events
     event NFTMinted(address minter);
-    event NFTTokenURISet(uint256 indexed tokenID);
+    event NFTTokenURISet(uint256 indexed tokenID, string tokenURI);
 
     constructor(string[16] memory tokenURIs) ERC721("RadioDAONFT", "RDIONFT") {
         _initialiseContract(tokenURIs);
@@ -47,6 +47,7 @@ contract RadioDAONFT is ERC721URIStorage, Ownable {
             revert AlreadyInitialised();
         }
 
+        s_tokenCounter = 0;
         s_tokenURIs = tokenURIs;
         s_isInitialised = true;
     }
@@ -59,10 +60,13 @@ contract RadioDAONFT is ERC721URIStorage, Ownable {
         uint256 newTokenID = s_tokenCounter;
 
         _safeMint(minter, newTokenID);
+        s_tokenCounter += 1;
         emit NFTMinted(minter);
 
-        _setTokenURI(newTokenID, s_tokenURIs[newTokenID]);
-        emit NFTTokenURISet(newTokenID);
+        string memory newTokenURI = s_tokenURIs[newTokenID];
+
+        _setTokenURI(newTokenID, newTokenURI);
+        emit NFTTokenURISet(newTokenID, newTokenURI);
 
         return newTokenID;
     }
