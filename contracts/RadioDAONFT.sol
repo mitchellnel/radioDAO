@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 error AlreadyInitialised();
-error RangeOutOfBounds();
 
 contract RadioDAONFT is ERC721URIStorage, Ownable {
     // NFT Contract Variables
@@ -32,9 +31,10 @@ contract RadioDAONFT is ERC721URIStorage, Ownable {
     }
 
     function getTokenURI(uint256 index) public view returns (string memory) {
-        if (index < 0 || index > 15) {
-            revert RangeOutOfBounds();
-        }
+        require(
+            index >= 0 && index <= 15,
+            "Requested token URI index not within bounds."
+        );
 
         return s_tokenURIs[index];
     }
