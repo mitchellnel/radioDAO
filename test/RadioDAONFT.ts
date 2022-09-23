@@ -1,7 +1,7 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
-import { assert, expect } from "chai";
-import { network, deployments, ethers } from "hardhat";
-import { developmentChains, networkConfig } from "../helper-hardhat-config";
+import { expect } from "chai";
+import { network, ethers } from "hardhat";
+import { developmentChains } from "../helper-hardhat-config";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 !developmentChains.includes(network.name)
