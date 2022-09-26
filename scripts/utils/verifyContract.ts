@@ -1,6 +1,6 @@
-import { run, ethers } from "hardhat";
+import { run } from "hardhat";
 
-async function verifyContract(contractAddress: Number, args: any[]) {
+async function verifyContract(contractAddress: string, args: any[]) {
   console.log("Verifying contract at address", contractAddress);
 
   try {
@@ -17,4 +17,4 @@ async function verifyContract(contractAddress: Number, args: any[]) {
   }
 }
 
-export default verifyContract;
+export { verifyContract };

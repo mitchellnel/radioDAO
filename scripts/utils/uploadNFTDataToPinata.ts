@@ -1,8 +1,4 @@
-import pinataSDK, {
-  PinataMetadata,
-  PinataPinOptions,
-  PinataPinResponse,
-} from "@pinata/sdk";
+import pinataSDK, { PinataPinOptions, PinataPinResponse } from "@pinata/sdk";
 
 import * as fs from "fs";
 import * as path from "path";
