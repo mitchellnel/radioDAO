@@ -1,27 +1,66 @@
-import { network, ethers } from "hardhat";
+import { network } from "hardhat";
 
 import * as path from "path";
 
-import { networkConfig, developmentChains } from "../helper-hardhat-config";
-import { pinFile, pinMetadata } from "./utils/uploadNFTDataToPinata";
+import { developmentChains } from "../helper-hardhat-config";
+import { pinFile, pinMetadata, verifyContract } from "../scripts/utils";
 
 import songs from "../src/assets/songs";
-import { RadioDAONFTMetadata } from "./types";
+import { RadioDAONFTMetadata } from "../scripts/types";
 
 import * as dotenv from "dotenv";
 dotenv.config();
 
-async function main() {
-  let tokenURIs: string[] = [];
+async function main({ getNamedAccounts, deployments }) {
+  const { deploy, log } = deployments;
+  const { deployer } = await getNamedAccounts();
+
+  let tokenURIs: string[] = [
+    "these",
+    "are",
+    "16",
+    "strings",
+    "that",
+    "are",
+    "the",
+    "temporary",
+    "uris",
+    "when",
+    "we",
+    "do",
+    "not",
+    "pin",
+    "to",
+    "pinata",
+  ];
+
   if (process.env.PIN_TO_PINATA === "true") {
     tokenURIs = await handleTokenURIs();
   }
-}
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+  const deployArgs = [tokenURIs];
+
+  log("Deploying RadioDAONFT contract ...");
+  const rdioNFT = await deploy("RadioDAONFT", {
+    from: deployer,
+    args: deployArgs,
+    log: true,
+    waitConfirmations: 1,
+  });
+
+  log("... Done! Deployed RadioDAONFT contract at", rdioNFT.address);
+
+  console.log(typeof rdioNFT.address);
+
+  // verify the deployment
+  if (
+    !developmentChains.includes(network.name) &&
+    process.env.ETHERSCAN_API_KEY
+  ) {
+    log("Verifying contract ...");
+    await verifyContract(rdioNFT.address, deployArgs);
+  }
+}
 
 async function handleTokenURIs(): Promise<string[]> {
   let tokenURIs: string[] = [];
@@ -56,3 +95,5 @@ async function handleTokenURIs(): Promise<string[]> {
 
   return tokenURIs;
 }
+
+export default main;
