@@ -13,6 +13,7 @@ import {
 import songs from "../src/assets/songs";
 import { RadioDAONFTMetadata } from "../scripts/types";
 
+import { readFileSync } from "fs";
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -41,6 +42,23 @@ async function main({ getNamedAccounts, deployments }) {
 
   if (process.env.PIN_TO_PINATA === "true") {
     tokenURIs = await handleTokenURIs();
+  } else {
+    // CHANGE THIS TO CHANGE IPFS HASH SOURCE
+    const HASH_JSON_FILENAME = path.resolve(
+      path.join("ipfs", "hashes_25092022.json")
+    );
+    //
+
+    const data = readFileSync(HASH_JSON_FILENAME, "utf8");
+    const hashes = JSON.parse(data).hashes;
+    const metadataPins = hashes.filter((pinnedFile) =>
+      pinnedFile.name.includes("Metadata")
+    );
+
+    tokenURIs = [];
+    metadataPins.forEach((pin) => {
+      tokenURIs.push(pin.link);
+    });
   }
 
   const deployArgs = [tokenURIs];
@@ -58,7 +76,7 @@ async function main({ getNamedAccounts, deployments }) {
   // verify the deployment
   if (
     !developmentChains.includes(network.name) &&
-    process.env.ETHERSCAN_TOKEN
+    process.env.ETHERSCAN_API_KEY
   ) {
     log("Verifying contract ...");
     await verifyContract(rdioNFT.address, deployArgs);
