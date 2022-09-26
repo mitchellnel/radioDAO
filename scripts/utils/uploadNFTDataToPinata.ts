@@ -1,38 +1,29 @@
-import pinataSDK, { PinataPinResponse } from "@pinata/sdk";
+import pinataSDK, {
+  PinataMetadata,
+  PinataPinOptions,
+  PinataPinResponse,
+} from "@pinata/sdk";
 
 import * as fs from "fs";
 import * as path from "path";
+
+import { RadioDAONFTMetadata } from "../types";
 
 import * as dotenv from "dotenv";
 dotenv.config();
 
 const PINATA_API_KEY = process.env.PINATA_API_KEY || "";
-const PINATA_SECRET_KEY = process.env.PINATA_SECRET_KEY || "";
+const PINATA_API_SECRET = process.env.PINATA_API_SECRET || "";
 
-const pinata = pinataSDK(PINATA_API_KEY, PINATA_SECRET_KEY);
+const pinata = pinataSDK(PINATA_API_KEY, PINATA_API_SECRET);
 
-async function storeFiles(filePath) {
-  const absolutePath = path.resolve(filePath);
-  const files = fs.readdirSync(absolutePath);
+async function pinFile(filePath: string): Promise<PinataPinResponse> {
+  const absoluteFilePath = path.resolve(filePath);
 
-  let responses: PinataPinResponse[] = [];
-  for (let file of files) {
-    const readableStreamForFile = fs.createReadStream(
-      `${absolutePath}/${file}`
-    );
+  const readableStreamForFile = fs.createReadStream(absoluteFilePath);
 
-    try {
-      const response = await pinata.pinFileToIPFS(readableStreamForFile);
-      responses.push(response);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-}
-
-async function storeMetadata(metadata): Promise<PinataPinResponse> {
   try {
-    const response = await pinata.pinJSONToIPFS(metadata);
+    const response = await pinata.pinFileToIPFS(readableStreamForFile);
     return response;
   } catch (err) {
     console.log(err);
@@ -41,4 +32,23 @@ async function storeMetadata(metadata): Promise<PinataPinResponse> {
   return null as unknown as PinataPinResponse;
 }
 
-module.exports = { storeFiles, storeMetadata };
+async function pinMetadata(
+  metadata: RadioDAONFTMetadata
+): Promise<PinataPinResponse> {
+  const options: PinataPinOptions = {
+    pinataMetadata: {
+      name: metadata.title,
+    },
+  };
+
+  try {
+    const response = await pinata.pinJSONToIPFS(metadata, options);
+    return response;
+  } catch (err) {
+    console.log(err);
+  }
+
+  return null as unknown as PinataPinResponse;
+}
+
+export { pinFile, pinMetadata };
