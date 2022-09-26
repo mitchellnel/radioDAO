@@ -1,9 +1,14 @@
-import { network, ethers } from "hardhat";
+import { network } from "hardhat";
 
 import * as path from "path";
 
 import { developmentChains } from "../helper-hardhat-config";
-import { pinFile, pinMetadata, verifyContract } from "../scripts/utils";
+import {
+  pinFile,
+  pinMetadata,
+  verifyContract,
+  writeIPFSHashesToJSON,
+} from "../scripts/utils";
 
 import songs from "../src/assets/songs";
 import { RadioDAONFTMetadata } from "../scripts/types";
@@ -53,7 +58,7 @@ async function main({ getNamedAccounts, deployments }) {
   // verify the deployment
   if (
     !developmentChains.includes(network.name) &&
-    process.env.ETHERSCAN_API_KEY
+    process.env.ETHERSCAN_TOKEN
   ) {
     log("Verifying contract ...");
     await verifyContract(rdioNFT.address, deployArgs);
@@ -71,10 +76,12 @@ async function handleTokenURIs(): Promise<string[]> {
 
     console.log("\t- pinning", imagePath, "...");
     const imageResponse = await pinFile(imagePath);
+    await writeIPFSHashesToJSON(song.title + ".jpg", imageResponse.IpfsHash);
     console.log("\t\t... Done!");
 
     console.log("\t- pinning", audioPath, "...");
     const audioResponse = await pinFile(audioPath);
+    await writeIPFSHashesToJSON(song.title + ".mp3", audioResponse.IpfsHash);
     console.log("\t\t... Done!");
 
     const metadata: RadioDAONFTMetadata = {
@@ -86,6 +93,10 @@ async function handleTokenURIs(): Promise<string[]> {
 
     console.log("\t- pinning NFT metadata ...");
     const metadataResponse = await pinMetadata(metadata);
+    await writeIPFSHashesToJSON(
+      song.title + " Metadata",
+      metadataResponse.IpfsHash
+    );
     console.log("\t\t... Done!");
 
     tokenURIs.push(`ipfs://${metadataResponse.IpfsHash}`);
