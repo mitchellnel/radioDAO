@@ -1,4 +1,4 @@
-import { network } from "hardhat";
+import { network, ethers } from "hardhat";
 
 import * as path from "path";
 
@@ -49,8 +49,6 @@ async function main({ getNamedAccounts, deployments }) {
   });
 
   log("... Done! Deployed RadioDAONFT contract at", rdioNFT.address);
-
-  console.log(typeof rdioNFT.address);
 
   // verify the deployment
   if (
