@@ -43,9 +43,29 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
     );
     event MarketItemDelisted(uint256 indexed tokenID, address indexed seller);
 
-    constructor(string[16] memory tokenURIs) ERC721("RadioDAONFT", "RDIONFT") {
-        _initialiseContract(tokenURIs);
+    constructor(string[16] memory tokenURIs, uint256 marketplaceFee)
+        ERC721("RadioDAONFT", "RDIONFT")
+    {
+        _initialiseContract(tokenURIs, marketplaceFee);
     }
+
+    // Constructor Helper //
+    function _initialiseContract(
+        string[16] memory tokenURIs,
+        uint256 marketplaceFee
+    ) private {
+        if (s_isInitialised) {
+            revert AlreadyInitialised();
+        }
+
+        s_tokenCounter = 0;
+        s_tokenURIs = tokenURIs;
+        s_isInitialised = true;
+
+        s_marketplaceFee = marketplaceFee;
+    }
+
+    //
 
     // Overrided functions to support both ERC721Enumerable & ERC721URIStorage extensions
     function tokenURI(uint256 tokenId)
@@ -113,15 +133,9 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
 
     //
 
-    // Constructor Helper //
-    function _initialiseContract(string[16] memory tokenURIs) private {
-        if (s_isInitialised) {
-            revert AlreadyInitialised();
-        }
-
-        s_tokenCounter = 0;
-        s_tokenURIs = tokenURIs;
-        s_isInitialised = true;
+    // Marketplace Variable Getters
+    function getMarketplaceFee() public view returns (uint256) {
+        return s_marketplaceFee;
     }
 
     //
