@@ -19,9 +19,11 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
         uint256 tokenID;
         address payable seller;
         uint256 price;
+        bool forSale;
     }
 
     MarketItem[] public s_marketItems;
+    uint256 public s_marketplaceFee;
 
     // NFT Events
     event NFTMinted(address minter);
@@ -39,6 +41,7 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
         address indexed seller,
         uint256 price
     );
+    event MarketItemDelisted(uint256 indexed tokenID, address indexed seller);
 
     constructor(string[16] memory tokenURIs) ERC721("RadioDAONFT", "RDIONFT") {
         _initialiseContract(tokenURIs);
@@ -140,6 +143,97 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
         emit NFTTokenURISet(newTokenID, newTokenURI);
 
         return newTokenID;
+    }
+
+    //
+
+    // User Collection Functions //
+    function getMyNFTs() external view returns (uint256[] memory) {
+        uint256 myNFTCount = balanceOf(msg.sender);
+        uint256[] memory ownedNFTs = new uint256[](myNFTCount);
+
+        for (uint256 i = 0; i < myNFTCount; i++) {
+            ownedNFTs[i] = tokenOfOwnerByIndex(msg.sender, i);
+        }
+
+        return ownedNFTs;
+    }
+
+    //
+
+    // Marketplace Functions //
+    function buyNFT(uint256 tokenID) external payable {
+        uint256 buyPrice = s_marketItems[tokenID].price;
+        address seller = s_marketItems[tokenID].seller;
+
+        // validation checks
+        require(
+            msg.sender != seller,
+            "You cannot purchase the NFT that you already owned and have listed. Instead, delist the NFT from the marketplace."
+        );
+        require(
+            msg.value == buyPrice,
+            "You did not send enough ETH to buy the NFT. Please send the asking price to complete the transaction."
+        );
+        require(
+            s_marketItems[tokenID].forSale,
+            "This item is not for sale. How did you manage to try and purchase it?"
+        );
+
+        // use the bool in the MarketItem to effectively delist the item from sale
+        s_marketItems[tokenID].forSale = false;
+
+        // complete the purchase transaction
+        _transfer(address(this), msg.sender, tokenID);
+        payable(seller).transfer(msg.value);
+        emit MarketItemBought(tokenID, seller, msg.sender, buyPrice);
+    }
+
+    function sellNFT(uint256 tokenID, uint256 salePrice) external payable {
+        require(
+            msg.value == s_marketplaceFee,
+            "A fee must be paid to the marketplace to list your NFT."
+        );
+        require(
+            salePrice > 0,
+            "You cannot list your NFT for a price less than zero. Please set a price greater than zero."
+        );
+
+        // list the item for sale, with updated sale parameters
+        s_marketItems[tokenID].price = salePrice;
+        s_marketItems[tokenID].seller = payable(msg.sender);
+        s_marketItems[tokenID].forSale = true;
+
+        // complete the listing transaction
+        _transfer(msg.sender, address(this), tokenID);
+        emit MarketItemListed(tokenID, msg.sender, salePrice);
+    }
+
+    function delistNFT(uint256 tokenID) external {
+        // use the bool in the MarketItem to effectively delist the item from sale
+        s_marketItems[tokenID].forSale = false;
+
+        // seller forfeits marketplace fee
+
+        // complete delisting transaction
+        _transfer(address(this), msg.sender, tokenID);
+        emit MarketItemDelisted(tokenID, msg.sender);
+    }
+
+    function getAllNFTsForSale() external view returns (MarketItem[] memory) {
+        uint256 numNFTsForSale = balanceOf(address(this));
+        MarketItem[] memory NFTsForSale = new MarketItem[](numNFTsForSale);
+
+        // look through s_marketItems and find those MarketItems for which forSale == true
+        uint256 currentIndex;
+        for (uint256 i = 0; i < s_marketItems.length; i++) {
+            if (s_marketItems[i].forSale) {
+                NFTsForSale[currentIndex] = s_marketItems[i];
+                currentIndex++;
+            }
+        }
+
+        return NFTsForSale;
     }
     //
 }
