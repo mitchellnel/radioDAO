@@ -11,6 +11,7 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
     // NFT Variables
     bool private s_isInitialised;
 
+    uint256 public constant MAX_TOKENS = 16;
     uint256 private s_tokenCounter;
     string[] internal s_tokenURIs;
 
@@ -26,7 +27,7 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
     uint256 public s_marketplaceFee;
 
     // NFT Events
-    event NFTMinted(address minter);
+    event NFTMinted(address minter, uint256 indexed tokenID);
     event NFTTokenURISet(uint256 indexed tokenID, string tokenURI);
 
     // Marketplace Events
@@ -43,15 +44,15 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
     );
     event MarketItemDelisted(uint256 indexed tokenID, address indexed seller);
 
-    constructor(string[16] memory tokenURIs, uint256 marketplaceFee)
+    constructor(string[MAX_TOKENS] memory tokenURIs, uint256 marketplaceFee)
         ERC721("RadioDAONFT", "RDIONFT")
     {
         _initialiseContract(tokenURIs, marketplaceFee);
     }
 
-    // Constructor Helper //
+    // Constructor Helpers //
     function _initialiseContract(
-        string[16] memory tokenURIs,
+        string[MAX_TOKENS] memory tokenURIs,
         uint256 marketplaceFee
     ) private {
         if (s_isInitialised) {
@@ -63,6 +64,34 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
         s_isInitialised = true;
 
         s_marketplaceFee = marketplaceFee;
+
+        _mintAllNFTs();
+    }
+
+    function _mintAllNFTs() private {
+        for (uint256 i = 0; i < MAX_TOKENS; i++) {
+            address minter = address(this);
+            uint256 newTokenID = s_tokenCounter;
+
+            // mint process
+            _safeMint(address(this), newTokenID);
+            s_tokenCounter += 1;
+            emit NFTMinted(minter, newTokenID);
+
+            // tokenURI setting process
+            string memory newTokenURI = s_tokenURIs[newTokenID];
+            _setTokenURI(newTokenID, newTokenURI);
+            emit NFTTokenURISet(newTokenID, newTokenURI);
+
+            // after an NFT is minted, list it for sale
+            MarketItem memory newItem;
+            newItem.tokenID = newTokenID;
+            newItem.seller = payable(minter);
+            newItem.price = 0;
+            newItem.forSale = true;
+
+            s_marketItems.push(newItem);
+        }
     }
 
     //
@@ -143,21 +172,6 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
     // Minting //
     // only allower owner of the contract to mint -- we'll pre-mint all the
     //  NFTs and then list for sale on the marketplace
-    function mintNFT() public onlyOwner returns (uint256 tokenID) {
-        address minter = msg.sender;
-        uint256 newTokenID = s_tokenCounter;
-
-        _safeMint(minter, newTokenID);
-        s_tokenCounter += 1;
-        emit NFTMinted(minter);
-
-        string memory newTokenURI = s_tokenURIs[newTokenID];
-
-        _setTokenURI(newTokenID, newTokenURI);
-        emit NFTTokenURISet(newTokenID, newTokenURI);
-
-        return newTokenID;
-    }
 
     //
 
