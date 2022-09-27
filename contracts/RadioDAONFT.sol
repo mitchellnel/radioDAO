@@ -176,6 +176,13 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
     //
 
     // Marketplace Functions //
+    function updateMarketplaceFee(uint256 newMarketplaceFee)
+        external
+        onlyOwner
+    {
+        s_marketplaceFee = newMarketplaceFee;
+    }
+
     function buyNFT(uint256 tokenID) external payable {
         uint256 buyPrice = s_marketItems[tokenID].price;
         address seller = s_marketItems[tokenID].seller;
