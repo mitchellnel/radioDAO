@@ -70,7 +70,7 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
 
     function _mintAllNFTs() private {
         for (uint256 i = 0; i < MAX_TOKENS; i++) {
-            address minter = address(this);
+            address minter = msg.sender;
             uint256 newTokenID = s_tokenCounter;
 
             // mint process
@@ -87,7 +87,7 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
             MarketItem memory newItem;
             newItem.tokenID = newTokenID;
             newItem.seller = payable(minter);
-            newItem.price = 0;
+            newItem.price = 100_000_000_000_000_000; // 0.1 eth = 10^17 wei
             newItem.forSale = true;
 
             s_marketItems.push(newItem);
@@ -208,7 +208,7 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
         );
         require(
             msg.value == buyPrice,
-            "You did not send enough ETH to buy the NFT. Please send the asking price to complete the transaction."
+            "You either sent too little or too much ETH. Please send the asking price to complete the transaction."
         );
         require(
             s_marketItems[tokenID].forSale,
