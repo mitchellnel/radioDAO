@@ -245,6 +245,10 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
     }
 
     function delistNFT(uint256 tokenID) external {
+        require(
+            msg.sender == s_marketItems[tokenID].seller,
+            "You cannot delist an NFT that you are not the seller of."
+        );
         // use the bool in the MarketItem to effectively delist the item from sale
         s_marketItems[tokenID].forSale = false;
 
