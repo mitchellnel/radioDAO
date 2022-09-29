@@ -227,7 +227,7 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
     function sellNFT(uint256 tokenID, uint256 salePrice) external payable {
         require(
             msg.value == s_marketplaceFee,
-            "A fee must be paid to the marketplace to list your NFT."
+            "A fee must be paid to the marketplace to list your NFT. This fee must be exactly the marketplace fee."
         );
         require(
             salePrice > 0,
@@ -240,6 +240,7 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
         s_marketItems[tokenID].forSale = true;
 
         // complete the listing transaction
+        payable(owner()).transfer(msg.value);
         _transfer(msg.sender, address(this), tokenID);
         emit MarketItemListed(tokenID, msg.sender, salePrice);
     }
