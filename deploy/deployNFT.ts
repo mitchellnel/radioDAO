@@ -45,7 +45,7 @@ async function main({ getNamedAccounts, deployments }) {
     "pinata",
   ];
 
-  const initialMarketplaceFee = toWei(0.01);
+  const initialMarketplaceFee = toWei(0.5);
 
   if (process.env.PIN_TO_PINATA === "true") {
     tokenURIs = await handleTokenURIs();
