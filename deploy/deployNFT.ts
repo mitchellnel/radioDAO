@@ -1,4 +1,4 @@
-import { network } from "hardhat";
+import { network, ethers } from "hardhat";
 
 import * as path from "path";
 
@@ -16,6 +16,8 @@ import { RadioDAONFTMetadata } from "../scripts/types";
 import { readFileSync } from "fs";
 import * as dotenv from "dotenv";
 dotenv.config();
+
+const toWei = (num: Number) => ethers.utils.parseEther(num.toString());
 
 async function main({ getNamedAccounts, deployments }) {
   const { deploy, log } = deployments;
@@ -40,6 +42,8 @@ async function main({ getNamedAccounts, deployments }) {
     "pinata",
   ];
 
+  const initialMarketplaceFee = toWei(0.01);
+
   if (process.env.PIN_TO_PINATA === "true") {
     tokenURIs = await handleTokenURIs();
   } else {
@@ -61,14 +65,14 @@ async function main({ getNamedAccounts, deployments }) {
     });
   }
 
-  const deployArgs = [tokenURIs];
+  const deployArgs = [tokenURIs, initialMarketplaceFee];
 
   log("Deploying RadioDAONFT contract ...");
   const rdioNFT = await deploy("RadioDAONFT", {
     from: deployer,
     args: deployArgs,
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 6, // wait 6 blocks so Etherscan has time to generate bytecode
   });
 
   log("... Done! Deployed RadioDAONFT contract at", rdioNFT.address);
