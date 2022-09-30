@@ -96,7 +96,7 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
             MarketItem memory newItem;
             newItem.tokenID = newTokenID;
             newItem.seller = payable(minter);
-            newItem.price = 100_000_000_000_000_000; // 0.1 eth = 10^17 wei
+            newItem.price = 1_000_000_000_000_000_000; // 1 NEL = 10^18 NELwei
             newItem.forSale = true;
 
             s_marketItems.push(newItem);
