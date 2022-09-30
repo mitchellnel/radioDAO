@@ -1,6 +1,6 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { BigNumberish, Contract, ContractFactory } from "ethers";
+import { BigNumber, BigNumberish, Contract, ContractFactory } from "ethers";
 import { network, ethers } from "hardhat";
 import { developmentChains } from "../helper-hardhat-config";
 
@@ -31,22 +31,41 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
       ];
       const name = "RadioDAONFT";
       const symbol = "RDIONFT";
-      const marketplaceFee = toWei(0.01);
+      const marketplaceFee = toWei(0.5);
+      const initialNFTBuyPrice = toWei(1);
       const MAX_TOKENS = 16;
 
-      let owner, otherAccount: SignerWithAddress;
-      let RadioDAONFTFactory: ContractFactory;
-      let rdioNFT: Contract;
+      let owner: SignerWithAddress,
+        user1: SignerWithAddress,
+        user2: SignerWithAddress;
+      let NELFactory: ContractFactory, RadioDAONFTFactory: ContractFactory;
+      let nel: Contract, rdioNFT: Contract;
 
       beforeEach(async () => {
-        [owner, otherAccount] = await ethers.getSigners();
+        [owner, user1, user2] = await ethers.getSigners();
 
+        NELFactory = await ethers.getContractFactory("Nelthereum");
         RadioDAONFTFactory = await ethers.getContractFactory("RadioDAONFT");
 
-        rdioNFT = await RadioDAONFTFactory.deploy(testURIs, marketplaceFee);
+        nel = await NELFactory.deploy();
+
+        for (let i = 0; i < 10; i++) {
+          await nel.connect(user1).requestTokens();
+        }
+        expect(await nel.balanceOf(user1.address)).to.equal(toWei(100));
+
+        rdioNFT = await RadioDAONFTFactory.deploy(
+          nel.address,
+          testURIs,
+          marketplaceFee
+        );
       });
 
       describe("Deployment, Construction, Initialisation and All Minting", () => {
+        it("Should set the NEL_CONTRACT variable correctly", async () => {
+          expect(await rdioNFT.NEL_CONTRACT()).to.equal(nel.address);
+        });
+
         it("Should set the s_isInitialised flag storage variable correctly", async () => {
           expect(await rdioNFT.getInitialisedFlag()).to.be.true;
         });
@@ -85,7 +104,7 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
             const item = await rdioNFT.s_marketItems(i);
             expect(item.tokenID).to.equal(i);
             expect(item.seller).to.equal(owner.address);
-            expect(item.price).to.equal(toWei(0.1));
+            expect(item.price).to.equal(initialNFTBuyPrice);
             expect(item.forSale).to.be.true;
           }
         });
@@ -107,19 +126,20 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
 
       describe("User Collection", () => {
         it("Should return an empty array for any address that isn't the contract, since no NFTs have yet been purchased", async () => {
-          const user1Items = await rdioNFT.connect(otherAccount).getMyNFTs();
+          const user1Items = await rdioNFT.connect(user1).getMyNFTs();
           expect(user1Items).to.be.empty;
         });
 
         it("Should fetch all NFTs that the user owns", async () => {
           const ownedByOtherAccount = [3, 6, 9];
-          await rdioNFT.connect(otherAccount).buyNFT(3, { value: toWei(0.1) });
-          await rdioNFT.connect(otherAccount).buyNFT(6, { value: toWei(0.1) });
-          await rdioNFT.connect(otherAccount).buyNFT(9, { value: toWei(0.1) });
+          await nel
+            .connect(user1)
+            .approve(rdioNFT.address, initialNFTBuyPrice.mul(3));
+          await rdioNFT.connect(user1).buyNFT(3, { value: initialNFTBuyPrice });
+          await rdioNFT.connect(user1).buyNFT(6, { value: initialNFTBuyPrice });
+          await rdioNFT.connect(user1).buyNFT(9, { value: initialNFTBuyPrice });
 
-          const myNFTs = await rdioNFT.connect(otherAccount).getMyNFTs();
-
-          console.log(myNFTs);
+          const myNFTs = await rdioNFT.connect(user1).getMyNFTs();
 
           expect(myNFTs.length).to.equal(3);
 
@@ -141,19 +161,20 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
 
           it("getAllNFTsForSale should return all MarketItems that have forSale set to true", async () => {
             const soldItems = [3, 6, 9];
+            await nel
+              .connect(user1)
+              .approve(rdioNFT.address, initialNFTBuyPrice.mul(3));
             await rdioNFT
-              .connect(otherAccount)
-              .buyNFT(3, { value: toWei(0.1) });
+              .connect(user1)
+              .buyNFT(3, { value: initialNFTBuyPrice });
             await rdioNFT
-              .connect(otherAccount)
-              .buyNFT(6, { value: toWei(0.1) });
+              .connect(user1)
+              .buyNFT(6, { value: initialNFTBuyPrice });
             await rdioNFT
-              .connect(otherAccount)
-              .buyNFT(9, { value: toWei(0.1) });
+              .connect(user1)
+              .buyNFT(9, { value: initialNFTBuyPrice });
 
-            const unsoldNFTs = await rdioNFT
-              .connect(otherAccount)
-              .getAllNFTsForSale();
+            const unsoldNFTs = await rdioNFT.connect(user1).getAllNFTsForSale();
 
             expect(unsoldNFTs.length).to.equal(13);
 
@@ -177,29 +198,41 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
           describe("Validation", () => {
             it("Should revert a transaction where the seller attempts to buy their own NFT", async () => {
               // owner tries to purchase an NFT for which they are the seller from the marketplace
+              await nel
+                .connect(owner)
+                .approve(rdioNFT.address, initialNFTBuyPrice);
+
               await expect(
-                rdioNFT.buyNFT(3, { value: toWei(0.1) })
+                rdioNFT.buyNFT(3, { value: initialNFTBuyPrice })
               ).to.be.revertedWith(
                 "You cannot purchase the NFT that you already owned and have listed. Instead, delist the NFT from the marketplace."
               );
             });
 
-            it("Should revert a transaction where the buyer does not send a value equal to the listing price", async () => {
-              // otherAccount tries to purchase an NFT with only 0.05 ETH, when the listed price is 0.1 ETH
-              await expect(
-                rdioNFT.connect(otherAccount).buyNFT(3, { value: toWei(0.05) })
-              ).to.be.revertedWith(
-                "You either sent too little or too much ETH. Please send the asking price to complete the transaction."
-              );
-            });
+            // it("Should revert a transaction where the buyer does not send a value equal to the listing price", async () => {
+            //   // otherAccount tries to purchase an NFT with only 0.05 ETH, when the listed price is 0.1 ETH
+            //   await expect(
+            //     rdioNFT.connect(user1).buyNFT(3, { value: toWei(0.05) })
+            //   ).to.be.revertedWith(
+            //     "You either sent too little or too much ETH. Please send the asking price to complete the transaction."
+            //   );
+            // });
 
             it("Should revert a transaction where the NFT has already been sold", async () => {
+              await nel
+                .connect(user1)
+                .approve(rdioNFT.address, initialNFTBuyPrice);
+
               await rdioNFT
-                .connect(otherAccount)
-                .buyNFT(3, { value: toWei(0.1) });
+                .connect(user1)
+                .buyNFT(3, { value: initialNFTBuyPrice });
+
+              await nel
+                .connect(user1)
+                .approve(rdioNFT.address, initialNFTBuyPrice);
 
               await expect(
-                rdioNFT.connect(otherAccount).buyNFT(3, { value: toWei(0.1) })
+                rdioNFT.connect(user1).buyNFT(3, { value: initialNFTBuyPrice })
               ).to.be.revertedWith(
                 "This item is not for sale. How did you manage to try and purchase it?"
               );
@@ -207,85 +240,105 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
           });
           describe("Correct update of MarketItem object in s_marketItems", () => {
             it("Should set the forSale field to false", async () => {
-              // otherAccount purchases an NFT from the marketplace
+              // user1 purchases an NFT from the marketplace
+              await nel
+                .connect(user1)
+                .approve(rdioNFT.address, initialNFTBuyPrice);
+
               await rdioNFT
-                .connect(otherAccount)
-                .buyNFT(3, { value: toWei(0.1) });
+                .connect(user1)
+                .buyNFT(3, { value: initialNFTBuyPrice });
 
               expect((await rdioNFT.s_marketItems(3)).forSale).to.be.false;
             });
           });
 
           describe("Correct transfer of NFT and ETH", () => {
-            let originalSellerBalance;
+            let originalSellerBalance: BigNumber;
             beforeEach(async () => {
-              originalSellerBalance = await owner.getBalance();
+              originalSellerBalance = await nel.balanceOf(owner.address);
+
+              await nel
+                .connect(user1)
+                .approve(rdioNFT.address, initialNFTBuyPrice);
 
               await rdioNFT
-                .connect(otherAccount)
-                .buyNFT(3, { value: toWei(0.1) });
+                .connect(user1)
+                .buyNFT(3, { value: initialNFTBuyPrice });
             });
 
-            // skip this test because sometimes it doesn't work properly
-            it.skip("Seller should receive payment of the listed NFT price", async () => {
-              const newSellerBalance = await owner.getBalance();
+            it("Seller should receive payment of the listed NFT price", async () => {
+              const newSellerBalance: BigNumber = await nel.balanceOf(
+                owner.address
+              );
 
               expect(+fromWei(newSellerBalance)).to.equal(
-                +fromWei(originalSellerBalance) + 0.1
+                +fromWei(originalSellerBalance.add(initialNFTBuyPrice))
               );
             });
 
             it("Buyer should receive the NFT", async () => {
-              expect(await rdioNFT.ownerOf(3)).to.equal(otherAccount.address);
-              expect(await rdioNFT.balanceOf(otherAccount.address)).to.equal(1);
+              expect(await rdioNFT.ownerOf(3)).to.equal(user1.address);
+              expect(await rdioNFT.balanceOf(user1.address)).to.equal(1);
             });
           });
 
           describe("Event Emittance", () => {
             it("Should emit a MarketItemBought event", async () => {
+              await nel
+                .connect(user1)
+                .approve(rdioNFT.address, initialNFTBuyPrice);
+
               await expect(
-                rdioNFT.connect(otherAccount).buyNFT(3, { value: toWei(0.1) })
+                rdioNFT.connect(user1).buyNFT(3, { value: initialNFTBuyPrice })
               )
                 .to.emit(rdioNFT, "MarketItemBought")
-                .withArgs(3, owner.address, otherAccount.address, toWei(0.1));
+                .withArgs(3, owner.address, user1.address, initialNFTBuyPrice);
             });
           });
         });
 
         describe("Selling NFTs", () => {
           beforeEach(async () => {
+            await nel
+              .connect(user1)
+              .approve(rdioNFT.address, initialNFTBuyPrice);
+
             await rdioNFT
-              .connect(otherAccount)
-              .buyNFT(3, { value: toWei(0.1) });
+              .connect(user1)
+              .buyNFT(3, { value: initialNFTBuyPrice });
           });
 
-          describe("Validation", () => {
-            it("Should revert a transaction where the seller does not send a value equal to the marketplace fee", async () => {
-              await expect(
-                rdioNFT
-                  .connect(otherAccount)
-                  .sellNFT(3, toWei(0.15), { value: toWei(0.005) })
-              ).to.be.revertedWith(
-                "A fee must be paid to the marketplace to list your NFT. This fee must be exactly the marketplace fee."
-              );
-            });
-          });
+          // describe("Validation", () => {
+          //   it("Should revert a transaction where the seller does not send a value equal to the marketplace fee", async () => {
+          //     await expect(
+          //       rdioNFT
+          //         .connect(user1)
+          //         .sellNFT(3, toWei(0.15), { value: toWei(0.005) })
+          //     ).to.be.revertedWith(
+          //       "A fee must be paid to the marketplace to list your NFT. This fee must be exactly the marketplace fee."
+          //     );
+          //   });
+          // });
+
           describe("Correct update of MarketItem object in s_marketItems", () => {
             beforeEach(async () => {
+              await nel.connect(user1).approve(rdioNFT.address, marketplaceFee);
+
               await rdioNFT
-                .connect(otherAccount)
-                .sellNFT(3, toWei(0.15), { value: toWei(0.01) });
+                .connect(user1)
+                .sellNFT(3, toWei(1.5), { value: marketplaceFee });
             });
 
             it("Should set the seller to the correct address", async () => {
               expect((await rdioNFT.s_marketItems(3)).seller).to.equal(
-                otherAccount.address
+                user1.address
               );
             });
 
             it("Should set the price to the new sale price", async () => {
               expect((await rdioNFT.s_marketItems(3)).price).to.equal(
-                toWei(0.15)
+                toWei(1.5)
               );
             });
 
@@ -294,50 +347,62 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
             });
           });
           describe("Correct transfer of NFT and ETH", () => {
-            let originalOwnerBalance;
+            let originalOwnerBalance: BigNumber;
             beforeEach(async () => {
-              originalOwnerBalance = await owner.getBalance();
+              originalOwnerBalance = await nel.balanceOf(owner.address);
+
+              await nel.connect(user1).approve(rdioNFT.address, marketplaceFee);
 
               await rdioNFT
-                .connect(otherAccount)
-                .sellNFT(3, toWei(0.15), { value: toWei(0.01) });
+                .connect(user1)
+                .sellNFT(3, toWei(1.5), { value: marketplaceFee });
             });
 
             it("Contract owner should receive payment of the marketplace fee", async () => {
-              const newOwnerBalance = await owner.getBalance();
+              const newOwnerBalance: BigNumber = await nel.balanceOf(
+                owner.address
+              );
 
               expect(+fromWei(newOwnerBalance)).to.equal(
-                +fromWei(originalOwnerBalance) + 0.01
+                +fromWei(originalOwnerBalance.add(marketplaceFee))
               );
             });
 
             it("Contract should receive the NFT", async () => {
               expect(await rdioNFT.ownerOf(3)).to.equal(rdioNFT.address);
-              expect(await rdioNFT.balanceOf(otherAccount.address)).to.equal(0);
+              expect(await rdioNFT.balanceOf(user1.address)).to.equal(0);
             });
           });
           describe("Event Emittance", () => {
             it("Should emit a MarketItemListed event", async () => {
+              await nel.connect(user1).approve(rdioNFT.address, marketplaceFee);
+
               await expect(
                 rdioNFT
-                  .connect(otherAccount)
-                  .sellNFT(3, toWei(0.15), { value: toWei(0.01) })
+                  .connect(user1)
+                  .sellNFT(3, toWei(1.5), { value: marketplaceFee })
               )
                 .to.emit(rdioNFT, "MarketItemListed")
-                .withArgs(3, otherAccount.address, toWei(0.15));
+                .withArgs(3, user1.address, toWei(1.5));
             });
           });
         });
 
         describe("Delisting NFTs", () => {
           beforeEach(async () => {
-            await rdioNFT
-              .connect(otherAccount)
-              .buyNFT(3, { value: toWei(0.1) });
+            await nel
+              .connect(user1)
+              .approve(rdioNFT.address, initialNFTBuyPrice);
 
             await rdioNFT
-              .connect(otherAccount)
-              .sellNFT(3, toWei(0.15), { value: toWei(0.01) });
+              .connect(user1)
+              .buyNFT(3, { value: initialNFTBuyPrice });
+
+            await nel.connect(user1).approve(rdioNFT.address, marketplaceFee);
+
+            await rdioNFT
+              .connect(user1)
+              .sellNFT(3, toWei(1.5), { value: marketplaceFee });
           });
           describe("Validation", () => {
             it("Should revert a transaction where the message sender is not the seller of the NFT", async () => {
@@ -350,24 +415,24 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
           });
           describe("Correct update of MarketItem object in s_marketItems", () => {
             it("Should set the forSale field to true", async () => {
-              await rdioNFT.connect(otherAccount).delistNFT(3);
+              await rdioNFT.connect(user1).delistNFT(3);
 
               expect((await rdioNFT.s_marketItems(3)).forSale).to.be.false;
             });
           });
           describe("Correct transfer of NFT", () => {
             it("Seller (delister) should receive the NFT", async () => {
-              await rdioNFT.connect(otherAccount).delistNFT(3);
+              await rdioNFT.connect(user1).delistNFT(3);
 
-              expect(await rdioNFT.ownerOf(3)).to.equal(otherAccount.address);
-              expect(await rdioNFT.balanceOf(otherAccount.address)).to.equal(1);
+              expect(await rdioNFT.ownerOf(3)).to.equal(user1.address);
+              expect(await rdioNFT.balanceOf(user1.address)).to.equal(1);
             });
           });
           describe("Event Emittance", () => {
             it("Should emit a MarketItemDelisted event", async () => {
-              await expect(rdioNFT.connect(otherAccount).delistNFT(3))
+              await expect(rdioNFT.connect(user1).delistNFT(3))
                 .to.emit(rdioNFT, "MarketItemDelisted")
-                .withArgs(3, otherAccount.address);
+                .withArgs(3, user1.address);
             });
           });
         });

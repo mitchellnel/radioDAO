@@ -1,13 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
 error AlreadyInitialised();
 
 contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
+    // NEL Variables
+    IERC20 public NEL_CONTRACT;
+
     // NFT Variables
     bool private s_isInitialised;
 
@@ -24,7 +28,7 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
     }
 
     MarketItem[] public s_marketItems;
-    uint256 public s_marketplaceFee;
+    uint256 public s_marketplaceFee; // in NEL
 
     // NFT Events
     event NFTMinted(address minter, uint256 indexed tokenID);
@@ -44,20 +48,25 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
     );
     event MarketItemDelisted(uint256 indexed tokenID, address indexed seller);
 
-    constructor(string[MAX_TOKENS] memory tokenURIs, uint256 marketplaceFee)
-        ERC721("RadioDAONFT", "RDIONFT")
-    {
-        _initialiseContract(tokenURIs, marketplaceFee);
+    constructor(
+        address nelContract,
+        string[MAX_TOKENS] memory tokenURIs,
+        uint256 marketplaceFee
+    ) ERC721("RadioDAONFT", "RDIONFT") {
+        _initialiseContract(nelContract, tokenURIs, marketplaceFee);
     }
 
     // Constructor Helpers //
     function _initialiseContract(
+        address nelContract,
         string[MAX_TOKENS] memory tokenURIs,
         uint256 marketplaceFee
     ) private {
         if (s_isInitialised) {
             revert AlreadyInitialised();
         }
+
+        NEL_CONTRACT = IERC20(nelContract);
 
         s_tokenCounter = 0;
         s_tokenURIs = tokenURIs;
@@ -87,11 +96,18 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
             MarketItem memory newItem;
             newItem.tokenID = newTokenID;
             newItem.seller = payable(minter);
-            newItem.price = 100_000_000_000_000_000; // 0.1 eth = 10^17 wei
+            newItem.price = 1_000_000_000_000_000_000; // 1 NEL = 10^18 NELwei
             newItem.forSale = true;
 
             s_marketItems.push(newItem);
         }
+    }
+
+    //
+
+    // NEL Contract Address Updater
+    function _updateNELContractAddress(address newAddress) external onlyOwner {
+        NEL_CONTRACT = IERC20(newAddress);
     }
 
     //
@@ -206,10 +222,10 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
             msg.sender != seller,
             "You cannot purchase the NFT that you already owned and have listed. Instead, delist the NFT from the marketplace."
         );
-        require(
-            msg.value == buyPrice,
-            "You either sent too little or too much ETH. Please send the asking price to complete the transaction."
-        );
+        // require(
+        //     msg.value == buyPrice,
+        //     "You either sent too little or too much ETH. Please send the asking price to complete the transaction."
+        // );
         require(
             s_marketItems[tokenID].forSale,
             "This item is not for sale. How did you manage to try and purchase it?"
@@ -218,17 +234,19 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
         // use the bool in the MarketItem to effectively delist the item from sale
         s_marketItems[tokenID].forSale = false;
 
+        // front-end will approve spending of buyPrice NEL tokens
+
         // complete the purchase transaction
         _transfer(address(this), msg.sender, tokenID);
-        payable(seller).transfer(msg.value);
+        NEL_CONTRACT.transferFrom(msg.sender, seller, buyPrice);
         emit MarketItemBought(tokenID, seller, msg.sender, buyPrice);
     }
 
     function sellNFT(uint256 tokenID, uint256 salePrice) external payable {
-        require(
-            msg.value == s_marketplaceFee,
-            "A fee must be paid to the marketplace to list your NFT. This fee must be exactly the marketplace fee."
-        );
+        // require(
+        //     msg.value == s_marketplaceFee,
+        //     "A fee must be paid to the marketplace to list your NFT. This fee must be exactly the marketplace fee."
+        // );
         require(
             salePrice > 0,
             "You cannot list your NFT for a price less than zero. Please set a price greater than zero."
@@ -239,8 +257,10 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
         s_marketItems[tokenID].seller = payable(msg.sender);
         s_marketItems[tokenID].forSale = true;
 
+        // front-end will approve spending of s_marketplaceFee NEL tokens
+
         // complete the listing transaction
-        payable(owner()).transfer(msg.value);
+        NEL_CONTRACT.transferFrom(msg.sender, owner(), s_marketplaceFee);
         _transfer(msg.sender, address(this), tokenID);
         emit MarketItemListed(tokenID, msg.sender, salePrice);
     }

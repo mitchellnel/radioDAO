@@ -23,6 +23,9 @@ async function main({ getNamedAccounts, deployments }) {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
 
+  // on live networks we need to wait 6 blocks for Etherscan to generate the bytecode
+  const waitConfirmations = !developmentChains.includes(network.name) ? 6 : 1;
+
   let tokenURIs: string[] = [
     "these",
     "are",
@@ -42,7 +45,7 @@ async function main({ getNamedAccounts, deployments }) {
     "pinata",
   ];
 
-  const initialMarketplaceFee = toWei(0.01);
+  const initialMarketplaceFee = toWei(0.5);
 
   if (process.env.PIN_TO_PINATA === "true") {
     tokenURIs = await handleTokenURIs();
@@ -65,14 +68,16 @@ async function main({ getNamedAccounts, deployments }) {
     });
   }
 
-  const deployArgs = [tokenURIs, initialMarketplaceFee];
+  const nel = await deployments.get("Nelthereum");
+
+  const deployArgs = [nel.address, tokenURIs, initialMarketplaceFee];
 
   log("Deploying RadioDAONFT contract ...");
   const rdioNFT = await deploy("RadioDAONFT", {
     from: deployer,
     args: deployArgs,
     log: true,
-    waitConfirmations: 6, // wait 6 blocks so Etherscan has time to generate bytecode
+    waitConfirmations: waitConfirmations,
   });
 
   log("... Done! Deployed RadioDAONFT contract at", rdioNFT.address);
