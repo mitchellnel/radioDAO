@@ -4,7 +4,6 @@ import { developmentChains } from "../helper-hardhat-config";
 
 import * as dotenv from "dotenv";
 import { verifyContract } from "../scripts/utils";
-import { wait } from "@testing-library/user-event/dist/utils";
 dotenv.config();
 
 async function main({ getNamedAccounts, deployments }) {
