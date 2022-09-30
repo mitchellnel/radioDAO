@@ -68,7 +68,9 @@ async function main({ getNamedAccounts, deployments }) {
     });
   }
 
-  const deployArgs = [tokenURIs, initialMarketplaceFee];
+  const nel = await deployments.get("Nelthereum");
+
+  const deployArgs = [nel.address, tokenURIs, initialMarketplaceFee];
 
   log("Deploying RadioDAONFT contract ...");
   const rdioNFT = await deploy("RadioDAONFT", {
