@@ -17,5 +17,6 @@ contract Nelthereum is ERC20 {
 
     function requestTokens() external {
         _mint(msg.sender, FAUCET_DRIP_AMOUNT);
+        emit FaucetDispensed(msg.sender);
     }
 }
