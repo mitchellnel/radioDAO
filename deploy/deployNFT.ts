@@ -23,6 +23,9 @@ async function main({ getNamedAccounts, deployments }) {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
 
+  // on live networks we need to wait 6 blocks for Etherscan to generate the bytecode
+  const waitConfirmations = !developmentChains.includes(network.name) ? 6 : 1;
+
   let tokenURIs: string[] = [
     "these",
     "are",
@@ -72,7 +75,7 @@ async function main({ getNamedAccounts, deployments }) {
     from: deployer,
     args: deployArgs,
     log: true,
-    waitConfirmations: 6, // wait 6 blocks so Etherscan has time to generate bytecode
+    waitConfirmations: waitConfirmations,
   });
 
   log("... Done! Deployed RadioDAONFT contract at", rdioNFT.address);
