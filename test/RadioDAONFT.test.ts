@@ -119,8 +119,6 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
 
           const myNFTs = await rdioNFT.connect(otherAccount).getMyNFTs();
 
-          console.log(myNFTs);
-
           expect(myNFTs.length).to.equal(3);
 
           // check that the IDs of the NFTs in myNFTs is correct
