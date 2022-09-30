@@ -10,7 +10,7 @@ error AlreadyInitialised();
 
 contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
     // NEL Variables
-    IERC20 private NEL_CONTRACT;
+    IERC20 public NEL_CONTRACT;
 
     // NFT Variables
     bool private s_isInitialised;
