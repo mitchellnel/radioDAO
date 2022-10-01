@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
 
@@ -8,13 +8,12 @@ import Col from "react-bootstrap/Col";
 
 import RadioIcon from "@mui/icons-material/Radio";
 import Button from "@mui/material/Button";
+import { useEthers } from "@usedapp/core";
 
 function Navbar() {
-  const [connectedFlag, setConnected] = useState<boolean>(false);
+  const { account, activateBrowserWallet, deactivate } = useEthers();
 
-  const connectWallet_TEMP = (): void => {
-    setConnected(!connectedFlag);
-  };
+  const connectedFlag: Boolean = account !== undefined;
 
   return (
     <header>
@@ -70,14 +69,25 @@ function Navbar() {
                 alignItems: "center",
               }}
             >
-              <Button
-                className="connect-btn"
-                variant="contained"
-                color="secondary"
-                onClick={() => connectWallet_TEMP()}
-              >
-                {connectedFlag ? "Disconnect" : "Connect"}
-              </Button>
+              {connectedFlag ? (
+                <Button
+                  className="connect-btn"
+                  variant="contained"
+                  color="secondary"
+                  onClick={deactivate}
+                >
+                  Disconnect
+                </Button>
+              ) : (
+                <Button
+                  className="connect-btn"
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => activateBrowserWallet()}
+                >
+                  Connect
+                </Button>
+              )}
             </div>
           </Col>
         </Row>

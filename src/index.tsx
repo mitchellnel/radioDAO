@@ -7,13 +7,31 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Config, DAppProvider, Goerli, Localhost } from "@usedapp/core";
+import { AlchemyProvider } from "@ethersproject/providers";
+
+const GOERLI_PROVIDER = new AlchemyProvider(
+  "goerli",
+  process.env.REACT_APP_GOERLI_API_KEY
+);
+
+const config: Config = {
+  readOnlyChainId: Goerli.chainId,
+  readOnlyUrls: {
+    [Goerli.chainId]: GOERLI_PROVIDER,
+    [Localhost.chainId]: "http://127.0.0.1:8545",
+  },
+};
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
 root.render(
   <React.StrictMode>
-    <App />
+    <DAppProvider config={config}>
+      <App />
+    </DAppProvider>
   </React.StrictMode>
 );
 
