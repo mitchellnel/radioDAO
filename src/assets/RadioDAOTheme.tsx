@@ -1,5 +1,3 @@
-import React from "react";
-
 import { createTheme } from "@mui/material/styles";
 
 const radioDAOTheme = createTheme({
