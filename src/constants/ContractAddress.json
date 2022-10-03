@@ -1,0 +1,10 @@
+{
+  "localhost": {
+    "nelthereum": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "radiodaonft": "0xB1Ea022C87f1125464460ba841e3bdD44F22109f"
+  },
+  "goerli": {
+    "nelthereum": "0xE53142A32Fc68abb0f56247021f4eb0396d654aE",
+    "radiodaonft": "0xB1Ea022C87f1125464460ba841e3bdD44F22109f"
+  }
+}
