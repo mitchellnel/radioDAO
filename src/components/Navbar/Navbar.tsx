@@ -56,6 +56,12 @@ function Navbar() {
 
               <li>|</li>
 
+              <Link to="/faucet">
+                <li className="li-link">Faucet</li>
+              </Link>
+
+              <li>|</li>
+
               <Link to="/marketplace">
                 <li className="li-link">Marketplace</li>
               </Link>

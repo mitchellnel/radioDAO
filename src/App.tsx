@@ -11,6 +11,7 @@ import Main from "./components/Main/Main";
 import Voting from "./components/Voting/Voting";
 import Collection from "./components/Collection/Collection";
 import Marketplace from "./components/Marketplace/Marketplace";
+import Faucet from "./components/Faucet/Faucet";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="/" element={<Main />} />
             <Route path="/voting" element={<Voting />} />
             <Route path="/collection" element={<Collection />} />
+            <Route path="/faucet" element={<Faucet />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route
               path="*"
