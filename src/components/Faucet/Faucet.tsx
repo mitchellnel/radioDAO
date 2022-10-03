@@ -2,21 +2,18 @@ import React from "react";
 import "./Faucet.css";
 
 import { Box, Container } from "@mui/material";
-import { useEthers, useTokenBalance } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 
-import ContractInfo from "../../constants/ContractAddress.json";
-import { formatUnits } from "ethers/lib/utils";
+import ContractInfo from "../../constants/ContractAddresses.json";
+
+import NELBalance from "./NELBalance";
+import RequestFunds from "./RequestFunds";
 
 function Faucet() {
-  const { chainId, account } = useEthers();
+  const { chainId } = useEthers();
   const networkName = chainId === 5 ? "goerli" : "localhost";
 
-  const NELAddr = ContractInfo[networkName]["nelthereum"];
-
-  const NELBalance = useTokenBalance(NELAddr, account);
-  const formattedNELBalance: number = NELBalance
-    ? parseFloat(formatUnits(NELBalance, 18))
-    : 0;
+  const nelAddress = ContractInfo[networkName]["nelthereum"];
 
   return (
     <div>
@@ -25,17 +22,22 @@ function Faucet() {
           Nelthereum Faucet
         </h1>
         <Box
+          className="faucet-box"
           sx={{
             backgroundColor: "#ebe7dd",
             borderRadius: "25px",
+            display: "flex",
+            flexDirection: "column",
             height: "325px",
             marginTop: "16px",
             opacity: "90%",
-            textAlign: "center",
+            alignItems: "center",
             width: "100%",
+            paddingTop: "56px",
           }}
         >
-          <h1>You currently have {formattedNELBalance} NEL</h1>
+          <NELBalance nelAddress={nelAddress} />
+          <RequestFunds nelAddress={nelAddress} />
         </Box>
       </Container>
     </div>
