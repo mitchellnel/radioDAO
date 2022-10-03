@@ -2,7 +2,7 @@ import React from "react";
 
 import LoadingButton from "@mui/lab/LoadingButton";
 
-import NelthereumABI from "../../constants/NelthereumABI.json";
+import NelthereumABI from "../../../constants/NelthereumABI.json";
 import { Contract, utils } from "ethers";
 import { useContractFunction } from "@usedapp/core";
 

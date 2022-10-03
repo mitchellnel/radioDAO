@@ -6,8 +6,8 @@ import { useEthers } from "@usedapp/core";
 
 import ContractInfo from "../../constants/ContractAddresses.json";
 
-import NELBalance from "./NELBalance";
-import RequestFunds from "./RequestFunds";
+import NELBalance from "./NELBalance/NELBalance";
+import RequestFunds from "./RequestFunds/RequestFunds";
 
 function Faucet() {
   const { chainId } = useEthers();
