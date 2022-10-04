@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { BigNumber, Contract } from "ethers";
-import { useEthers } from "@usedapp/core";
+import { useContractFunction, useEthers } from "@usedapp/core";
 import {
   Modal,
   Box,
@@ -58,6 +58,16 @@ function ListingModal({
 
   // work out if user is seller
   const isOwnedByUser = seller === account || seller === undefined;
+
+  // create a buyNFT function that will call the buyNFT contract function
+  const { state: buyNFTState, send: buyNFTSend } = useContractFunction(
+    nftContract,
+    "buyNFT",
+    { transactionName: "Buy NFT" }
+  );
+  const buyNFT = (buyPrice: number) => {
+    buyNFTSend({ value: buyPrice });
+  };
 
   // handler for when the modal button is pressed
   const handleModalButtonClick = async (isOwnedByUser: boolean) => {

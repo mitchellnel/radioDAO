@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  useContractFunction,
-  useEthers,
-  useNotifications,
-} from "@usedapp/core";
+import { useContractFunction, useEthers } from "@usedapp/core";
 import { BigNumber, Contract, ethers, utils } from "ethers";
 
 import { Card } from "@web3uikit/core";
@@ -36,16 +32,6 @@ function NFTCard({ rdioNFTAddress, tokenID, seller, price }: NFTCardProps) {
   const rdioNFTABI = RadioDAONFTABI["abi"];
   const rdioNFTInterface = new utils.Interface(rdioNFTABI);
   const rdioNFTContract = new Contract(rdioNFTAddress, rdioNFTInterface);
-
-  // create a buyNFT function that will call the buyNFT contract function
-  const { state: buyNFTState, send: buyNFTSend } = useContractFunction(
-    rdioNFTContract,
-    "buyNFT",
-    { transactionName: "Buy NFT" }
-  );
-  const buyNFT = (buyPrice: number) => {
-    buyNFTSend({ value: buyPrice });
-  };
 
   // get the token URI using useTokenURI hook
   const tokenURI = useTokenURI(rdioNFTABI, rdioNFTAddress, tokenID);
@@ -94,7 +80,6 @@ function NFTCard({ rdioNFTAddress, tokenID, seller, price }: NFTCardProps) {
           isVisible={showModal}
           onClose={hideModal}
           nftContract={rdioNFTContract}
-          nftInterface={rdioNFTInterface}
           tokenID={tokenID}
           seller={seller}
           songTitle={songTitle}
