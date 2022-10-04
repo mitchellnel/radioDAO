@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useContractFunction, useEthers } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 import { BigNumber, Contract, ethers, utils } from "ethers";
 
 import { Card } from "@web3uikit/core";
@@ -7,7 +7,7 @@ import { Card } from "@web3uikit/core";
 import RadioDAONFTABI from "../../../../constants/RadioDAONFTABI.json";
 import { useTokenURI } from "../../../../hooks/radioDAONFT";
 import { RadioDAONFTMetadata } from "../../../../../scripts/types";
-import ListingModal from "./ListingModal/ListingModal";
+import ListingModal from "./ListingModal";
 
 interface NFTCardProps {
   rdioNFTAddress: string;
