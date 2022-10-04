@@ -65,17 +65,33 @@ function ListingModal({
     "buyNFT",
     { transactionName: "Buy NFT" }
   );
-  const buyNFT = (buyPrice: number) => {
-    buyNFTSend({ value: buyPrice });
+  const buyNFT = (tokenID: number) => {
+    buyNFTSend(tokenID);
+  };
+
+  // create a delistNFT function that will call the delistNFT contract function
+  const { state: delistState, send: delistNFTSend } = useContractFunction(
+    nftContract,
+    "delistNFT",
+    { transactionName: "Delist NFT" }
+  );
+  const delistNFT = (tokenID: number) => {
+    delistNFTSend(tokenID);
   };
 
   // handler for when the modal button is pressed
   const handleModalButtonClick = async (isOwnedByUser: boolean) => {
     setLoading(true);
-    isOwnedByUser
-      ? console.log("Button clicked as owner")
-      : console.log("Button clicked as buyer");
+
+    if (isOwnedByUser) {
+      delistNFT(tokenID);
+    } else {
+      // TODO: need to approve NEL approval on front-end
+      buyNFT(tokenID);
+    }
   };
+
+  // once the NFT is either bought or delisted, close the modal
 
   return (
     <Modal
