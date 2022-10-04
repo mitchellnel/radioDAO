@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 
-import { BigNumber, Contract, utils } from "ethers";
+import { BigNumber, Contract } from "ethers";
 import { useEthers } from "@usedapp/core";
-import { Modal, Box } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  IconButton,
+  Avatar,
+  CircularProgress,
+} from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+
+import CloseIcon from "@mui/icons-material/Close";
 
 const modalBoxStyle = {
   position: "absolute" as "absolute",
@@ -13,7 +23,7 @@ const modalBoxStyle = {
   bgcolor: "primary.light",
   border: "2px solid #e8bd30",
   boxShadow: 24,
-  p: 4,
+  p: 2,
   outline: "none",
 };
 
@@ -21,7 +31,6 @@ interface ListingModalProps {
   isVisible: boolean;
   onClose: () => void;
   nftContract: Contract;
-  nftInterface: utils.Interface;
   tokenID: number;
   seller: string | undefined;
   songTitle: string | undefined;
@@ -35,7 +44,6 @@ function ListingModal({
   isVisible,
   onClose,
   nftContract,
-  nftInterface,
   tokenID,
   seller,
   songTitle,
@@ -46,17 +54,17 @@ function ListingModal({
 }: ListingModalProps) {
   const { account } = useEthers();
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   // work out if user is seller
   const isOwnedByUser = seller === account || seller === undefined;
 
-  // handler for when "Ok" (green) modal button is pressed
-  const handleOk = (isOwnedByUser: boolean) => {
-    isOwnedByUser ? console.log("owned") : console.log("not owned");
-  };
-
-  // handler for when "Cancel" (clear) modal button is pressed
-  const handleCancel = (isOwnedByUser: boolean) => {
-    isOwnedByUser ? console.log("owned") : console.log("not owned");
+  // handler for when the modal button is pressed
+  const handleModalButtonClick = async (isOwnedByUser: boolean) => {
+    setLoading(true);
+    isOwnedByUser
+      ? console.log("Button clicked as owner")
+      : console.log("Button clicked as buyer");
   };
 
   return (
@@ -67,24 +75,66 @@ function ListingModal({
       aria-describedby="modal-listing-modal-description"
     >
       <Box sx={modalBoxStyle}>
-        {seller === account ? <div>hi mr seller</div> : <div>hi pleb</div>}
+        <div
+          className="flex flex-row items-center"
+          style={{ justifyContent: "space-between" }}
+        >
+          <div className="flex flex-col">
+            <Typography
+              id="modal-listing-modal"
+              variant="h2"
+              component="h2"
+              color="primary.contrastText"
+              fontFamily="Outfit"
+              fontWeight="600"
+            >
+              {songTitle}
+            </Typography>
+            <Typography
+              id="modal-listing-modal-description"
+              variant="h4"
+              component="h4"
+              color="primary.contrastText"
+              fontFamily="Outfit"
+              fontWeight="600"
+            >
+              {"by " + songArtist}
+            </Typography>
+          </div>
+          <IconButton
+            aria-label="close-modal"
+            color="secondary"
+            onClick={onClose}
+            sx={{ "&:hover": { backgroundColor: "rgb(232, 189, 48, 0.4)" } }}
+          >
+            <Avatar
+              sx={{
+                bgcolor: "secondary.main",
+                color: "primary.main",
+                height: 40,
+                width: 40,
+              }}
+            >
+              <CloseIcon sx={{ fontSize: "1.5rem" }} />
+            </Avatar>
+          </IconButton>
+        </div>
+        <div>Song art and player</div>
+        <div className="flex justify-center mt-16">
+          <LoadingButton
+            loading={loading}
+            loadingIndicator={<CircularProgress color="secondary" size={24} />}
+            variant="contained"
+            color="secondary"
+            sx={{ fontFamily: "Outfit", fontSize: "1rem", fontWeight: "600" }}
+            onClick={() => handleModalButtonClick(isOwnedByUser)}
+          >
+            {isOwnedByUser ? "Delist NFT" : "Buy NFT"}
+          </LoadingButton>
+        </div>
       </Box>
     </Modal>
   );
 }
 
 export default ListingModal;
-
-// <Modal
-//   isVisible={isVisible}
-//   id="regular"
-//   title={songTitle + " by " + songArtist}
-//   okText="Cancel"
-//   onOk={() => handleOk(isOwnedByUser)}
-//   okButtonColor="yellow"
-//   cancelText={isOwnedByUser ? "Delist NFT" : "Cancel"}
-//   onCancel={() => handleCancel(isOwnedByUser)}
-//   onCloseButtonPressed={onClose}
-// >
-//   {seller === account ? <div>hi mr seller</div> : <div>hi pleb</div>}
-// </Modal>
