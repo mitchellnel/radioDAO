@@ -11,6 +11,7 @@ import { Card } from "@web3uikit/core";
 import RadioDAONFTABI from "../../../../constants/RadioDAONFTABI.json";
 import { useTokenURI } from "../../../../hooks/radioDAONFT";
 import { RadioDAONFTMetadata } from "../../../../../scripts/types";
+import ListingModal from "./ListingModal/ListingModal";
 
 interface NFTCardProps {
   rdioNFTAddress: string;
@@ -30,8 +31,6 @@ function NFTCard({ rdioNFTAddress, tokenID, seller, price }: NFTCardProps) {
 
   const [showModal, setShowModalFlag] = useState<boolean>(false);
   const hideModal = () => setShowModalFlag(false);
-
-  const { notifications } = useNotifications();
 
   // create RadioDAONFT contract object
   const rdioNFTABI = RadioDAONFTABI["abi"];
@@ -83,11 +82,33 @@ function NFTCard({ rdioNFTAddress, tokenID, seller, price }: NFTCardProps) {
     ? "You"
     : truncateString(seller, 15);
 
+  // open modal (popup window) when card is clicked
+  const handleCardClick = () => {
+    setShowModalFlag(true);
+  };
+
   return (
     <div className="m-4">
       {imageURI ? (
-        <div style={{ width: "256px" }}>
-          <Card title={songTitle} description={songArtist}>
+        <div>
+          <ListingModal
+            isVisible={showModal}
+            onClose={hideModal}
+            nftContract={rdioNFTContract}
+            nftInterface={rdioNFTInterface}
+            tokenID={tokenID}
+            seller={seller}
+            songTitle={songTitle}
+            songArtist={songArtist}
+            imageURI={imageURI}
+            audioURI={audioURI}
+            price={price}
+          />
+          <Card
+            title={songTitle}
+            description={songArtist}
+            onClick={handleCardClick}
+          >
             <div className="p-2">
               <div className="flex flex-col items-center gap-2">
                 <div>#{tokenID}</div>
