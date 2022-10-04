@@ -33,10 +33,12 @@ function NFTCard({ rdioNFTAddress, tokenID, seller, price }: NFTCardProps) {
 
   const { notifications } = useNotifications();
 
+  // create RadioDAONFT contract object
   const rdioNFTABI = RadioDAONFTABI["abi"];
   const rdioNFTInterface = new utils.Interface(rdioNFTABI);
   const rdioNFTContract = new Contract(rdioNFTAddress, rdioNFTInterface);
 
+  // create a buyNFT function that will call the buyNFT contract function
   const { state: buyNFTState, send: buyNFTSend } = useContractFunction(
     rdioNFTContract,
     "buyNFT",
@@ -46,34 +48,36 @@ function NFTCard({ rdioNFTAddress, tokenID, seller, price }: NFTCardProps) {
     buyNFTSend({ value: buyPrice });
   };
 
+  // get the token URI using useTokenURI hook
   const tokenURI = useTokenURI(rdioNFTABI, rdioNFTAddress, tokenID);
 
-  const updateUI = async () => {
-    if (tokenURI) {
-      const requestURL = tokenURI
-        .toString()
-        .replace("ipfs://", "https://ipfs.io/ipfs/");
-      const tokenURIResponse: RadioDAONFTMetadata = await (
-        await fetch(requestURL)
-      ).json();
-
-      setSongTitle(tokenURIResponse.title);
-      setSongArtist(tokenURIResponse.artist);
-      setImageURI(
-        tokenURIResponse.image.replace("ipfs://", "https://ipfs.io/ipfs/")
-      );
-      setAudioURI(
-        tokenURIResponse.audio.replace("ipfs://", "https://ipfs.io/ipfs/")
-      );
-    }
-  };
-
+  // update the UI when we get the token URI
   useEffect(() => {
     if (active !== undefined) {
+      const updateUI = async () => {
+        if (tokenURI) {
+          const requestURL = tokenURI
+            .toString()
+            .replace("ipfs://", "https://ipfs.io/ipfs/");
+          const tokenURIResponse: RadioDAONFTMetadata = await (
+            await fetch(requestURL)
+          ).json();
+
+          setSongTitle(tokenURIResponse.title);
+          setSongArtist(tokenURIResponse.artist);
+          setImageURI(
+            tokenURIResponse.image.replace("ipfs://", "https://ipfs.io/ipfs/")
+          );
+          setAudioURI(
+            tokenURIResponse.audio.replace("ipfs://", "https://ipfs.io/ipfs/")
+          );
+        }
+      };
       updateUI();
     }
   }, [active, tokenURI]);
 
+  // work out how to display NFT seller on marketplace
   const isOwnedByUser = seller === account || seller === undefined;
   const formattedSellerAddress = isOwnedByUser
     ? "You"
