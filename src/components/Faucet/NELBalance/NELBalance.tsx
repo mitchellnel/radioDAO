@@ -1,5 +1,4 @@
 import React from "react";
-import "./Faucet.css";
 
 import { useEthers, useTokenBalance } from "@usedapp/core";
 
