@@ -4,6 +4,7 @@ const radioDAOTheme = createTheme({
   palette: {
     primary: {
       main: "#5506bf",
+      light: "#7d57be",
       contrastText: "#e8bd30",
     },
     secondary: {
