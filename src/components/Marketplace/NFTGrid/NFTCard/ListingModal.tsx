@@ -5,7 +5,7 @@ import { useContractFunction, useEthers } from "@usedapp/core";
 import { Modal, Box, Typography, CircularProgress } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import ModalCloseButton from "./ModalCloseButton";
-import PlayerControls from "../../../Main/PlayerControls/PlayerControls";
+import ModalPlayer from "./ModalPlayer";
 
 const modalBoxStyle = {
   position: "absolute" as "absolute",
@@ -137,15 +137,21 @@ function ListingModal({
           </div>
           <ModalCloseButton onClick={onClose} />
         </div>
-        <div className="flex flex-row mt-10 justify-center items-center">
-          <img
-            className=""
-            src={imageURI}
-            alt="nft song art"
-            height="400"
-            width="400"
-          />
-          <div>{/* <PlayerControls /> */}</div>
+        <div className="flex flex-row mt-4 justify-center items-center">
+          <div className="basis-1/2 pl-6">
+            <img
+              className=""
+              src={imageURI}
+              alt="nft song art"
+              height="400"
+              width="400"
+              style={{ marginRight: "200px" }}
+            />
+          </div>
+
+          <div className="basis-1/2 pt-20 px-10">
+            <ModalPlayer audioURI={audioURI as string} />
+          </div>
         </div>
         <div className="flex justify-center mt-16">
           <LoadingButton
