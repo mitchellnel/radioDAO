@@ -1,15 +1,21 @@
 import React from "react";
 
-import { Container } from "@mui/material";
+import NFTGrid from "./NFTGrid/NFTGrid";
 
 function Marketplace() {
   return (
-    <div>
-      <Container maxWidth="lg" sx={{ marginTop: "48px", textAlign: "left" }}>
-        <h1 style={{ fontSize: "3rem", fontWeight: "600" }}>
-          RadioDAONFT Marketplace
-        </h1>
-      </Container>
+    <div className="container mx-auto">
+      <h1
+        style={{
+          fontSize: "3rem",
+          fontWeight: "600",
+          marginTop: "32px",
+          textAlign: "left",
+        }}
+      >
+        RadioDAONFT Marketplace
+      </h1>
+      <NFTGrid />
     </div>
   );
 }
