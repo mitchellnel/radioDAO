@@ -1,6 +1,5 @@
 import React from "react";
 
-import { BigNumber } from "ethers";
 import { useEthers } from "@usedapp/core";
 
 import { useGetAllNFTsForSale } from "../../../hooks/radioDAONFT";
@@ -29,7 +28,7 @@ function NFTGrid() {
               rdioNFTAddress="0xB1Ea022C87f1125464460ba841e3bdD44F22109f"
               tokenID={nft.tokenID.toNumber()}
               seller="0xcDA1048cf97B65ED9fb852AE677F02a28bd09ad3"
-              price={BigNumber.from("10000000000000000000")}
+              price={nft.price}
             />
           );
         })
