@@ -89,51 +89,53 @@ function NFTCard({ rdioNFTAddress, tokenID, seller, price }: NFTCardProps) {
 
   return (
     <div className="m-4">
-      {imageURI ? (
-        <div>
-          <ListingModal
-            isVisible={showModal}
-            onClose={hideModal}
-            nftContract={rdioNFTContract}
-            nftInterface={rdioNFTInterface}
-            tokenID={tokenID}
-            seller={seller}
-            songTitle={songTitle}
-            songArtist={songArtist}
-            imageURI={imageURI}
-            audioURI={audioURI}
-            price={price}
-          />
-          <Card
-            title={songTitle}
-            description={songArtist}
-            onClick={handleCardClick}
-          >
-            <div className="p-2">
-              <div className="flex flex-col items-center gap-2">
-                <div>#{tokenID}</div>
+      <div>
+        <ListingModal
+          isVisible={showModal}
+          onClose={hideModal}
+          nftContract={rdioNFTContract}
+          nftInterface={rdioNFTInterface}
+          tokenID={tokenID}
+          seller={seller}
+          songTitle={songTitle}
+          songArtist={songArtist}
+          imageURI={imageURI}
+          audioURI={audioURI}
+          price={price}
+        />
+        <Card
+          title={songTitle}
+          description={songArtist}
+          onClick={handleCardClick}
+        >
+          <div className="p-2">
+            <div className="flex flex-col items-center gap-2">
+              {imageURI ? (
+                <>
+                  <div>#{tokenID}</div>
 
-                <div className="italic text-sm">
-                  Owned by {formattedSellerAddress}
-                </div>
+                  <div className="italic text-sm">
+                    Owned by {formattedSellerAddress}
+                  </div>
 
-                <img
-                  src={imageURI}
-                  alt="nft song art"
-                  height="200"
-                  width="200"
-                />
+                  <img
+                    src={imageURI}
+                    alt="nft song art"
+                    height="200"
+                    width="200"
+                  />
 
-                <div className="font-bold">
-                  {ethers.utils.formatUnits(price, "ether")} NEL
-                </div>
-              </div>
+                  <div className="font-bold">
+                    {ethers.utils.formatUnits(price, "ether")} NEL
+                  </div>
+                </>
+              ) : (
+                <div className="mx-16 my-40">Loading ...</div>
+              )}
             </div>
-          </Card>
-        </div>
-      ) : (
-        <div>Loading ...</div>
-      )}
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }
