@@ -3,13 +3,13 @@ import React, { useEffect, useState } from "react";
 import { useEthers, useNotifications } from "@usedapp/core";
 
 import { useGetAllNFTsForSale } from "../../../hooks/radioDAONFT";
-import NFTCard from "./NFTCard/NFTCard";
+import MarketplaceNFTCard from "./MarketplaceNFTCard/MarketplaceNFTCard";
 import RadioDAONFTABI from "../../../constants/RadioDAONFTABI.json";
 import ContractAddresses from "../../../constants/ContractAddresses.json";
-import NotificationModal from "./NFTCard/NotificationModal";
+import NotificationModal from "./NotificationModal/NotificationModal";
 import { SuccessNotification } from "../../../types";
 
-function NFTGrid() {
+function MarketplaceNFTGrid() {
   const { chainId } = useEthers();
   const networkName = chainId === 5 ? "goerli" : "localhost";
 
@@ -59,7 +59,7 @@ function NFTGrid() {
             if (nft === undefined) return <div></div>;
 
             return (
-              <NFTCard
+              <MarketplaceNFTCard
                 key={nft.tokenID.toNumber()}
                 rdioNFTAddress="0xB1Ea022C87f1125464460ba841e3bdD44F22109f"
                 tokenID={nft.tokenID.toNumber()}
@@ -76,4 +76,4 @@ function NFTGrid() {
   );
 }
 
-export default NFTGrid;
+export default MarketplaceNFTGrid;

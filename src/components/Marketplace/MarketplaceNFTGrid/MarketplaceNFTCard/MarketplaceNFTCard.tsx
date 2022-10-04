@@ -7,7 +7,7 @@ import { Card } from "@web3uikit/core";
 import RadioDAONFTABI from "../../../../constants/RadioDAONFTABI.json";
 import { useTokenURI } from "../../../../hooks/radioDAONFT";
 import { RadioDAONFTMetadata } from "../../../../../scripts/types";
-import ListingModal from "./ListingModal";
+import ListingModal from "./ListingModal/ListingModal";
 
 interface NFTCardProps {
   rdioNFTAddress: string;
@@ -17,7 +17,12 @@ interface NFTCardProps {
   key: number;
 }
 
-function NFTCard({ rdioNFTAddress, tokenID, seller, price }: NFTCardProps) {
+function MarketplaceNFTCard({
+  rdioNFTAddress,
+  tokenID,
+  seller,
+  price,
+}: NFTCardProps) {
   const { active, account } = useEthers();
 
   const [songTitle, setSongTitle] = useState<string>("");
@@ -125,7 +130,7 @@ function NFTCard({ rdioNFTAddress, tokenID, seller, price }: NFTCardProps) {
   );
 }
 
-export default NFTCard;
+export default MarketplaceNFTCard;
 
 function truncateString(str: string, strLen: number): string {
   if (str.length <= strLen) return str;

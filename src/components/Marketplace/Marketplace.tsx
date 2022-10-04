@@ -1,6 +1,6 @@
 import React from "react";
 
-import NFTGrid from "./NFTGrid/NFTGrid";
+import MarketplaceNFTGrid from "./MarketplaceNFTGrid/MarketplaceNFTGrid";
 
 function Marketplace() {
   return (
@@ -15,7 +15,7 @@ function Marketplace() {
       >
         RadioDAONFT Marketplace
       </h1>
-      <NFTGrid />
+      <MarketplaceNFTGrid />
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 
 import ModalPlayerControls from "./ModalPlayerControls";
-import useAudioPlayer from "../../../../hooks/useAudioplayer";
-import DynamicAudio from "../../../Main/DynamicAudio/DynamicAudio";
+import useAudioPlayer from "../../../../../../hooks/useAudioplayer";
+import DynamicAudio from "../../../../../Main/DynamicAudio/DynamicAudio";
 
 interface ModalPlayerProps {
   audioURI: string;
