@@ -1,18 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { BigNumber, Contract } from "ethers";
 import { useContractFunction, useEthers } from "@usedapp/core";
-import {
-  Modal,
-  Box,
-  Typography,
-  IconButton,
-  Avatar,
-  CircularProgress,
-} from "@mui/material";
+import { Modal, Box, Typography, CircularProgress } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-
-import CloseIcon from "@mui/icons-material/Close";
+import ModalCloseButton from "./ModalCloseButton";
+import PlayerControls from "../../../Main/PlayerControls/PlayerControls";
 
 const modalBoxStyle = {
   position: "absolute" as "absolute",
@@ -70,7 +63,7 @@ function ListingModal({
   };
 
   // create a delistNFT function that will call the delistNFT contract function
-  const { state: delistState, send: delistNFTSend } = useContractFunction(
+  const { state: delistNFTState, send: delistNFTSend } = useContractFunction(
     nftContract,
     "delistNFT",
     { transactionName: "Delist NFT" }
@@ -91,7 +84,19 @@ function ListingModal({
     }
   };
 
-  // once the NFT is either bought or delisted, close the modal
+  // use transaction states to set loading button state
+  useEffect(() => {
+    if (
+      buyNFTState.status === "PendingSignature" ||
+      buyNFTState.status === "Mining" ||
+      delistNFTState.status === "PendingSignature" ||
+      delistNFTState.status === "Mining"
+    ) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  }, [buyNFTState, delistNFTState]);
 
   return (
     <Modal
@@ -105,7 +110,7 @@ function ListingModal({
           className="flex flex-row items-center"
           style={{ justifyContent: "space-between" }}
         >
-          <div className="flex flex-col">
+          <div className="flex flex-row items-end">
             <Typography
               id="modal-listing-modal"
               variant="h2"
@@ -123,29 +128,25 @@ function ListingModal({
               color="primary.contrastText"
               fontFamily="Outfit"
               fontWeight="600"
-            >
-              {"by " + songArtist}
-            </Typography>
-          </div>
-          <IconButton
-            aria-label="close-modal"
-            color="secondary"
-            onClick={onClose}
-            sx={{ "&:hover": { backgroundColor: "rgb(232, 189, 48, 0.4)" } }}
-          >
-            <Avatar
               sx={{
-                bgcolor: "secondary.main",
-                color: "primary.main",
-                height: 40,
-                width: 40,
+                marginBottom: "5px",
               }}
             >
-              <CloseIcon sx={{ fontSize: "1.5rem" }} />
-            </Avatar>
-          </IconButton>
+              <div className="flex flex-row ml-3">{"by " + songArtist}</div>
+            </Typography>
+          </div>
+          <ModalCloseButton onClick={onClose} />
         </div>
-        <div>Song art and player</div>
+        <div className="flex flex-row mt-10 justify-center items-center">
+          <img
+            className=""
+            src={imageURI}
+            alt="nft song art"
+            height="400"
+            width="400"
+          />
+          <div>{/* <PlayerControls /> */}</div>
+        </div>
         <div className="flex justify-center mt-16">
           <LoadingButton
             loading={loading}
