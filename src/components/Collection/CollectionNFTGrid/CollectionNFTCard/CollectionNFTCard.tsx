@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useEthers } from "@usedapp/core";
-import { BigNumber, Contract, ethers, utils } from "ethers";
+import { Contract, utils } from "ethers";
 
 import { Card } from "@web3uikit/core";
 
 import RadioDAONFTABI from "../../../../constants/RadioDAONFTABI.json";
 import { useTokenURI } from "../../../../hooks/radioDAONFT";
 import { RadioDAONFTMetadata } from "../../../../../scripts/types";
+import CollectionModal from "./CollectionModal.tsx/CollectionModal";
 
 interface CollectionNFTCardProps {
   rdioNFTAddress: string;
@@ -17,7 +18,7 @@ function CollectionNFTCard({
   rdioNFTAddress,
   tokenID,
 }: CollectionNFTCardProps) {
-  const { active, account } = useEthers();
+  const { active } = useEthers();
 
   const [songTitle, setSongTitle] = useState<string>("");
   const [songArtist, setSongArtist] = useState<string>("");
@@ -69,6 +70,16 @@ function CollectionNFTCard({
   return (
     <div className="m-4">
       <div>
+        <CollectionModal
+          isVisible={showModal}
+          onClose={hideModal}
+          nftContract={rdioNFTContract}
+          tokenID={tokenID}
+          songTitle={songTitle}
+          songArtist={songArtist}
+          imageURI={imageURI}
+          audioURI={audioURI}
+        />
         <Card
           title={songTitle}
           description={songArtist}
@@ -90,7 +101,7 @@ function CollectionNFTCard({
                   />
                 </>
               ) : (
-                <div className="mx-16 my-40">Loading ...</div>
+                <div className="mx-16 my-36">Loading ...</div>
               )}
             </div>
           </div>
