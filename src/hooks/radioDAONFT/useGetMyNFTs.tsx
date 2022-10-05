@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { ethers, Contract, utils } from "ethers";
+import { ethers, Contract, BigNumber } from "ethers";
 import { useEthers } from "@usedapp/core";
 
 function useGetMyNFTs(nftABI: any, nftAddress: string): number[] | undefined {
@@ -30,7 +30,11 @@ function useGetMyNFTs(nftABI: any, nftAddress: string): number[] | undefined {
 
   const getMyNFTs = async () => {
     if (contract) {
-      setMyNFTs(await contract.getMyNFTs());
+      setMyNFTs(
+        (await contract.getMyNFTs()).map((tokenID_BigNumber: BigNumber) => {
+          return tokenID_BigNumber.toNumber();
+        })
+      );
     }
   };
 
