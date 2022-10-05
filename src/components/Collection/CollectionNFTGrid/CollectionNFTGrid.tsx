@@ -25,8 +25,6 @@ function CollectionNFTGrid() {
   const hideNotification = () => setShowNotificationFlag(false);
 
   useEffect(() => {
-    console.log("looking for notification");
-
     notifications.every((notification) => {
       if (
         notification.type === "transactionSucceed" &&
@@ -40,10 +38,6 @@ function CollectionNFTGrid() {
       return true;
     });
   }, [notifications]);
-
-  useEffect(() => {
-    console.log(userOwnedNFTs);
-  }, [userOwnedNFTs]);
 
   return (
     <>
@@ -63,9 +57,9 @@ function CollectionNFTGrid() {
 
             return (
               <CollectionNFTCard
-                key={tokenID}
+                key={tokenID.toNumber()}
                 rdioNFTAddress={nftAddress}
-                tokenID={tokenID}
+                tokenID={tokenID.toNumber()}
               />
             );
           })

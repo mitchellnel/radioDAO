@@ -25,8 +25,6 @@ function MarketplaceNFTGrid() {
   const hideNotification = () => setShowNotificationFlag(false);
 
   useEffect(() => {
-    console.log("looking for notification");
-
     notifications.every((notification) => {
       if (
         notification.type === "transactionSucceed" &&
