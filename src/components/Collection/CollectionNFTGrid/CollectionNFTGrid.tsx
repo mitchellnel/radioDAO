@@ -1,11 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-import { useEthers } from "@usedapp/core";
+import { useEthers, useNotifications } from "@usedapp/core";
 
 import RadioDAONFTABI from "../../../constants/RadioDAONFTABI.json";
 import ContractAddresses from "../../../constants/ContractAddresses.json";
 import { useGetMyNFTs } from "../../../hooks/radioDAONFT";
 import CollectionNFTCard from "./CollectionNFTCard/CollectionNFTCard";
+import { SuccessNotification } from "../../../types";
+import NotificationModal from "../../shared/NotificationModal/NotificationModal";
 
 function CollectionNFTGrid() {
   const { chainId } = useEthers();
@@ -16,30 +18,62 @@ function CollectionNFTGrid() {
 
   const userOwnedNFTs = useGetMyNFTs(nftABI, nftAddress);
 
-  // put notification stuff here
+  const { notifications } = useNotifications();
+  const [successNotification, setSuccessNotification] =
+    useState<SuccessNotification>();
+  const [showNotification, setShowNotificationFlag] = useState<boolean>(false);
+  const hideNotification = () => setShowNotificationFlag(false);
+
+  useEffect(() => {
+    console.log("looking for notification");
+
+    notifications.every((notification) => {
+      if (
+        notification.type === "transactionSucceed" &&
+        notification.transactionName === "Sell NFT"
+      ) {
+        setShowNotificationFlag(true);
+        setSuccessNotification(notification);
+        return false;
+      }
+
+      return true;
+    });
+  }, [notifications]);
 
   useEffect(() => {
     console.log(userOwnedNFTs);
   }, [userOwnedNFTs]);
 
   return (
-    <div className="flex flex-wrap">
-      {userOwnedNFTs !== undefined ? (
-        userOwnedNFTs.map((tokenID) => {
-          if (tokenID === undefined) return <div></div>;
-
-          return (
-            <CollectionNFTCard
-              key={tokenID}
-              rdioNFTAddress={nftAddress}
-              tokenID={tokenID}
-            />
-          );
-        })
+    <>
+      {showNotification ? (
+        <NotificationModal
+          isVisible={showNotification}
+          onClose={hideNotification}
+          successNotification={successNotification as SuccessNotification}
+        />
       ) : (
-        <div></div>
+        <></>
       )}
-    </div>
+      <div className="flex flex-wrap">
+        {userOwnedNFTs !== undefined ? (
+          userOwnedNFTs.map((tokenID) => {
+            if (tokenID === undefined) return <div></div>;
+
+            return (
+              <CollectionNFTCard
+                key={tokenID}
+                rdioNFTAddress={nftAddress}
+                tokenID={tokenID}
+              />
+            );
+          })
+        ) : (
+          <div></div>
+        )}
+      </div>
+    </>
   );
 }
 
