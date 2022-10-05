@@ -19,7 +19,7 @@ const config: Config = {
   readOnlyChainId: Goerli.chainId,
   readOnlyUrls: {
     [Goerli.chainId]: GOERLI_PROVIDER,
-    [Localhost.chainId]: "http://127.0.0.1:8545",
+    // [Localhost.chainId]: "http://127.0.0.1:8545",
   },
 };
 
