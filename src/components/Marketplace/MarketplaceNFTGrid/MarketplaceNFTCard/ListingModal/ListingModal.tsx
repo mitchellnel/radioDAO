@@ -4,8 +4,8 @@ import { BigNumber, Contract } from "ethers";
 import { useContractFunction, useEthers } from "@usedapp/core";
 import { Modal, Box, Typography, CircularProgress } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import ModalCloseButton from "./ModalCloseButton";
-import ModalPlayer from "./ModalPlayer/ModalPlayer";
+import ModalCloseButton from "../../../../shared/ModalFeatures/ModalCloseButton";
+import ModalPlayer from "../../../../shared/ModalFeatures/ModalPlayer/ModalPlayer";
 
 const modalBoxStyle = {
   position: "absolute" as "absolute",

@@ -6,7 +6,7 @@ import { useGetAllNFTsForSale } from "../../../hooks/radioDAONFT";
 import MarketplaceNFTCard from "./MarketplaceNFTCard/MarketplaceNFTCard";
 import RadioDAONFTABI from "../../../constants/RadioDAONFTABI.json";
 import ContractAddresses from "../../../constants/ContractAddresses.json";
-import NotificationModal from "./NotificationModal/NotificationModal";
+import NotificationModal from "../../shared/NotificationModal/NotificationModal";
 import { SuccessNotification } from "../../../types";
 
 function MarketplaceNFTGrid() {

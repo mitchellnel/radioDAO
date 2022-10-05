@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-import PlayerSlider from "../../../../../Main/PlayerControls/PlayerSlider/PlayerSlider";
-import PlayButton from "../../../../../Main/PlayerControls/Buttons/PlayButton";
-import PauseButton from "../../../../../Main/PlayerControls/Buttons/PauseButton";
+import PlayerSlider from "../../../Main/PlayerControls/PlayerSlider/PlayerSlider";
+import PlayButton from "../../../Main/PlayerControls/Buttons/PlayButton";
+import PauseButton from "../../../Main/PlayerControls/Buttons/PauseButton";
 
 interface ModalPlayerControlsProps {
   currentlyPlaying: boolean;

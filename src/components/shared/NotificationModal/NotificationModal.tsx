@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Box, Typography, IconButton, Avatar } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
-import { SuccessNotification } from "../../../../types";
+import { SuccessNotification } from "../../../types";
 
 const modalBoxStyle = {
   position: "absolute" as "absolute",
