@@ -7,22 +7,16 @@ import { Card } from "@web3uikit/core";
 import RadioDAONFTABI from "../../../../constants/RadioDAONFTABI.json";
 import { useTokenURI } from "../../../../hooks/radioDAONFT";
 import { RadioDAONFTMetadata } from "../../../../../scripts/types";
-import ListingModal from "./ListingModal/ListingModal";
 
-interface MarketplaceNFTCardProps {
+interface CollectionNFTCardProps {
   rdioNFTAddress: string;
   tokenID: number;
-  seller: string;
-  price: BigNumber;
-  key: number;
 }
 
-function MarketplaceNFTCard({
+function CollectionNFTCard({
   rdioNFTAddress,
   tokenID,
-  seller,
-  price,
-}: MarketplaceNFTCardProps) {
+}: CollectionNFTCardProps) {
   const { active, account } = useEthers();
 
   const [songTitle, setSongTitle] = useState<string>("");
@@ -67,12 +61,6 @@ function MarketplaceNFTCard({
     }
   }, [active, tokenURI]);
 
-  // work out how to display NFT seller on marketplace
-  const isOwnedByUser = seller === account || seller === undefined;
-  const formattedSellerAddress = isOwnedByUser
-    ? "You"
-    : truncateString(seller, 15);
-
   // open modal (popup window) when card is clicked
   const handleCardClick = () => {
     setShowModalFlag(true);
@@ -81,18 +69,6 @@ function MarketplaceNFTCard({
   return (
     <div className="m-4">
       <div>
-        <ListingModal
-          isVisible={showModal}
-          onClose={hideModal}
-          nftContract={rdioNFTContract}
-          tokenID={tokenID}
-          seller={seller}
-          songTitle={songTitle}
-          songArtist={songArtist}
-          imageURI={imageURI}
-          audioURI={audioURI}
-          price={price}
-        />
         <Card
           title={songTitle}
           description={songArtist}
@@ -104,9 +80,7 @@ function MarketplaceNFTCard({
                 <>
                   <div>#{tokenID}</div>
 
-                  <div className="italic text-sm">
-                    Owned by {formattedSellerAddress}
-                  </div>
+                  <div className="italic text-sm">Owned by You</div>
 
                   <img
                     src={imageURI}
@@ -114,10 +88,6 @@ function MarketplaceNFTCard({
                     height="200"
                     width="200"
                   />
-
-                  <div className="font-bold">
-                    {ethers.utils.formatUnits(price, "ether")} NEL
-                  </div>
                 </>
               ) : (
                 <div className="mx-16 my-40">Loading ...</div>
@@ -130,21 +100,4 @@ function MarketplaceNFTCard({
   );
 }
 
-export default MarketplaceNFTCard;
-
-function truncateString(str: string, strLen: number): string {
-  if (str.length <= strLen) return str;
-
-  const separator = "...";
-
-  const nCharsToShow = strLen - separator.length;
-
-  const frontChars = Math.ceil(nCharsToShow / 2);
-  const backChars = Math.floor(nCharsToShow / 2);
-
-  return (
-    str.substring(0, frontChars) +
-    separator +
-    str.substring(str.length - backChars)
-  );
-}
+export default CollectionNFTCard;
