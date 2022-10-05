@@ -1,48 +1,27 @@
-import { useEffect, useState } from "react";
+import { useCall, useEthers } from "@usedapp/core";
+import { Contract, utils, BigNumber } from "ethers";
 
-import { ethers, Contract, BigNumber } from "ethers";
-import { useEthers } from "@usedapp/core";
-
-function useGetMyNFTs(nftABI: any, nftAddress: string): number[] | undefined {
+function useGetMyNFTs(
+  nftABI: any,
+  nftAddress: string
+): BigNumber[] | undefined {
   const { account } = useEthers();
-  const [contract, setContract] = useState<Contract>();
-  const [myNFTs, setMyNFTs] = useState<number[]>();
+  const nftInterface = new utils.Interface(nftABI);
+  const nftContract = new Contract(nftAddress, nftInterface);
 
-  useEffect(() => {
-    const loadContract = async (signer: ethers.providers.JsonRpcSigner) => {
-      // Get deployed copy of music nft marketplace contract
-      const contract = new ethers.Contract(nftAddress, nftABI, signer);
-      setContract(contract);
-    };
+  const { value, error } =
+    useCall({
+      contract: nftContract,
+      method: "getUserNFTs",
+      args: [account],
+    }) ?? {};
 
-    const web3Handler = async () => {
-      if (window.ethereum) {
-        // Get provider from Metamask
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        // Get signer
-        const signer = provider.getSigner();
-        loadContract(signer);
-      }
-    };
+  if (error) {
+    return undefined;
+  }
 
-    web3Handler();
-  }, [nftABI, nftAddress]);
-
-  const getMyNFTs = async () => {
-    if (contract) {
-      setMyNFTs(
-        (await contract.getMyNFTs()).map((tokenID_BigNumber: BigNumber) => {
-          return tokenID_BigNumber.toNumber();
-        })
-      );
-    }
-  };
-
-  useEffect(() => {
-    getMyNFTs();
-  }, [account, contract]);
-
-  return myNFTs;
+  if (value !== undefined) return value[0];
+  else return value;
 }
 
 export { useGetMyNFTs };
