@@ -61,9 +61,9 @@ function MarketplaceNFTGrid() {
             return (
               <MarketplaceNFTCard
                 key={nft.tokenID.toNumber()}
-                rdioNFTAddress="0xB1Ea022C87f1125464460ba841e3bdD44F22109f"
+                rdioNFTAddress={nftAddress}
                 tokenID={nft.tokenID.toNumber()}
-                seller="0xcDA1048cf97B65ED9fb852AE677F02a28bd09ad3"
+                seller={nft.seller}
                 price={nft.price}
               />
             );
