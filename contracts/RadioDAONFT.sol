@@ -192,12 +192,16 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
     //
 
     // User Collection Functions //
-    function getMyNFTs() external view returns (uint256[] memory) {
-        uint256 myNFTCount = balanceOf(msg.sender);
+    function getUserNFTs(address user)
+        external
+        view
+        returns (uint256[] memory)
+    {
+        uint256 myNFTCount = balanceOf(user);
         uint256[] memory ownedNFTs = new uint256[](myNFTCount);
 
         for (uint256 i = 0; i < myNFTCount; i++) {
-            ownedNFTs[i] = tokenOfOwnerByIndex(msg.sender, i);
+            ownedNFTs[i] = tokenOfOwnerByIndex(user, i);
         }
 
         return ownedNFTs;
