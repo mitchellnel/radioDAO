@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useEthers } from "@usedapp/core";
 import { Contract, utils } from "ethers";
-
 import { Card } from "@web3uikit/core";
+import { RadioDAONFTMetadata } from "../../../../../scripts/types";
+
+import {
+  useGetMarketplaceFee,
+  useTokenURI,
+} from "../../../../hooks/radioDAONFT";
+
+import CollectionModal from "./CollectionModal/CollectionModal";
 
 import RadioDAONFTABI from "../../../../constants/RadioDAONFTABI.json";
-import { useTokenURI } from "../../../../hooks/radioDAONFT";
-import { RadioDAONFTMetadata } from "../../../../../scripts/types";
-import CollectionModal from "./CollectionModal.tsx/CollectionModal";
 
 interface CollectionNFTCardProps {
   rdioNFTAddress: string;
@@ -32,6 +36,9 @@ function CollectionNFTCard({
   const rdioNFTABI = RadioDAONFTABI["abi"];
   const rdioNFTInterface = new utils.Interface(rdioNFTABI);
   const rdioNFTContract = new Contract(rdioNFTAddress, rdioNFTInterface);
+
+  // get the marketplace fee using the useGetMarketplaceFee hook
+  const marketplaceFee = useGetMarketplaceFee(rdioNFTABI, rdioNFTAddress);
 
   // get the token URI using useTokenURI hook
   const tokenURI = useTokenURI(rdioNFTABI, rdioNFTAddress, tokenID);
@@ -79,6 +86,7 @@ function CollectionNFTCard({
           songArtist={songArtist}
           imageURI={imageURI}
           audioURI={audioURI}
+          marketplaceFee={marketplaceFee ? marketplaceFee.toString() : "0"}
         />
         <Card
           title={songTitle}

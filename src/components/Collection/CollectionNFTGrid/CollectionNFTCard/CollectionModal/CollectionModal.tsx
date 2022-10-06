@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { BigNumber, Contract, utils } from "ethers";
-import { useContractFunction } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 import {
   Modal,
   Box,
@@ -10,8 +10,14 @@ import {
   TextField,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+
+import { useApproveAndSellNFT } from "../../../../../hooks/radioDAONFT";
+
 import ModalCloseButton from "../../../../shared/ModalFeatures/ModalCloseButton";
 import ModalPlayer from "../../../../shared/ModalFeatures/ModalPlayer/ModalPlayer";
+
+import NelthereumABI from "../../../../../constants/NelthereumABI.json";
+import ContractAddresses from "../../../../../constants/ContractAddresses.json";
 
 const modalBoxStyle = {
   position: "absolute" as "absolute",
@@ -35,6 +41,7 @@ interface CollectionModalProps {
   songArtist: string | undefined;
   imageURI: string | undefined;
   audioURI: string | undefined;
+  marketplaceFee: string;
 }
 
 function CollectionModal({
@@ -46,22 +53,25 @@ function CollectionModal({
   songArtist,
   imageURI,
   audioURI,
+  marketplaceFee,
 }: CollectionModalProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [sellPrice, setSellPrice] = useState<string>("");
   const [sellPriceFieldError, setSellPriceFieldError] =
     useState<boolean>(false);
 
-  // create a sellNFT function that will call the sellNFT contract function
-  const { state: sellNFTState, send: sellNFTSend } = useContractFunction(
-    nftContract,
-    "sellNFT",
-    { transactionName: "Sell NFT" }
-  );
-  const sellNFT = (tokenID: number, priceToSell: string) => {
-    const price = utils.parseUnits(priceToSell, 18);
-    sellNFTSend(tokenID, price);
-  };
+  // get NEL contract
+  const { chainId } = useEthers();
+  const networkName = chainId === 5 ? "goerli" : "localhost";
+
+  const nelABI = NelthereumABI["abi"];
+  const nelInterface = new utils.Interface(nelABI);
+  const nelAddress = ContractAddresses[networkName]["nelthereum"];
+  const nelContract = new Contract(nelAddress, nelInterface);
+
+  // get function to make sell transaction
+  const { txnState: approveAndSellNFTState, approveAndSellNFT } =
+    useApproveAndSellNFT(nelContract, nftContract, marketplaceFee);
 
   // handler for when the modal button is pressed
   const handleModalButtonClick = async (priceToSell: string) => {
@@ -70,23 +80,20 @@ function CollectionModal({
       return;
     }
 
-    setLoading(true);
-
-    // TODO: need to approve NEL approval on front end
-    sellNFT(tokenID, priceToSell);
+    approveAndSellNFT(tokenID, utils.parseUnits(sellPrice, 18));
   };
 
   // use transaction states to set loading button state
   useEffect(() => {
     if (
-      sellNFTState.status === "PendingSignature" ||
-      sellNFTState.status === "Mining"
+      approveAndSellNFTState.status === "PendingSignature" ||
+      approveAndSellNFTState.status === "Mining"
     ) {
       setLoading(true);
     } else {
       setLoading(false);
     }
-  }, [sellNFTState]);
+  }, [approveAndSellNFTState]);
 
   // sellPrice control
   const handleSellPriceChange = (
