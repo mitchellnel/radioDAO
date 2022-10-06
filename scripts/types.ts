@@ -1,3 +1,5 @@
+import { BigNumber } from "ethers";
+
 type RadioDAONFTMetadata = {
   title: string;
   artist: string;
@@ -5,4 +7,11 @@ type RadioDAONFTMetadata = {
   audio: string;
 };
 
-export type { RadioDAONFTMetadata };
+type MarketItem = {
+  tokenID: BigNumber;
+  seller: string;
+  price: BigNumber;
+  forSale: boolean;
+};
+
+export type { RadioDAONFTMetadata, MarketItem };

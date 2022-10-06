@@ -126,7 +126,9 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
 
       describe("User Collection", () => {
         it("Should return an empty array for any address that isn't the contract, since no NFTs have yet been purchased", async () => {
-          const user1Items = await rdioNFT.connect(user1).getMyNFTs();
+          const user1Items = await rdioNFT
+            .connect(user1)
+            .getUserNFTs(user1.address);
           expect(user1Items).to.be.empty;
         });
 
@@ -139,7 +141,9 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
           await rdioNFT.connect(user1).buyNFT(6, { value: initialNFTBuyPrice });
           await rdioNFT.connect(user1).buyNFT(9, { value: initialNFTBuyPrice });
 
-          const myNFTs = await rdioNFT.connect(user1).getMyNFTs();
+          const myNFTs = await rdioNFT
+            .connect(user1)
+            .getUserNFTs(user1.address);
 
           expect(myNFTs.length).to.equal(3);
 

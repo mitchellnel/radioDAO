@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./PlayerControls.css";
 
 import PlayerSlider from "./PlayerSlider/PlayerSlider";
 import PlayButton from "./Buttons/PlayButton";
@@ -78,7 +77,7 @@ function PlayerControls({
         <NextButton onClick={clickNext} />
       </div>
 
-      <div id="mute-button">
+      <div id="mute-button" className="mt-3">
         {isMuted ? (
           <UnmuteButton onClick={clickMute} />
         ) : (
