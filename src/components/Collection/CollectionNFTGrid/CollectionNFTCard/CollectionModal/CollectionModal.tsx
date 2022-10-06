@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { BigNumber, Contract, utils } from "ethers";
+import { Contract, utils } from "ethers";
 import { useEthers } from "@usedapp/core";
 import {
   Modal,
@@ -105,9 +105,12 @@ function CollectionModal({
   // validation checks on sellPrice
   useEffect(() => {
     if (Number(sellPrice)) {
-      const sellPrice_BigNumber: BigNumber = BigNumber.from(sellPrice);
+      const sellPrice_Number: Number = Number(sellPrice);
 
-      if (!sellPrice_BigNumber.gt(BigNumber.from(0))) {
+      console.log("sp", sellPrice);
+      console.log("sp_N", sellPrice_Number);
+
+      if (sellPrice_Number <= 0) {
         setSellPriceFieldError(true);
       } else {
         setSellPriceFieldError(false);
