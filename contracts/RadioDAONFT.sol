@@ -45,7 +45,7 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, ERC721Votes {
             uint256 newTokenID = s_tokenCounter;
 
             // mint process
-            _safeMint(address(this), newTokenID);
+            _safeMint(minter, newTokenID);
             s_tokenCounter += 1;
             emit NFTMinted(minter, newTokenID);
 
