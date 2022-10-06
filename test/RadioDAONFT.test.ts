@@ -30,7 +30,7 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
         "uri_16",
       ];
       const name = "RadioDAONFT";
-      const symbol = "RDIONFT";
+      const symbol = "RDIO";
       const marketplaceFee = toWei(0.5);
       const initialNFTBuyPrice = toWei(1);
       const MAX_TOKENS = 16;
