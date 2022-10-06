@@ -6,12 +6,16 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
+interface IRadioDAONFT is IERC721Enumerable {
+    function MAX_TOKENS() external view returns (uint256);
+}
+
 contract RadioDAOMarketplace is IERC721Receiver, Ownable {
     // NEL Variables
     IERC20 public NEL_CONTRACT;
 
     // RDIO Variables
-    IERC721Enumerable public RDIO_CONTRACT;
+    IRadioDAONFT public RDIO_CONTRACT;
 
     // Marketplace Variables
     struct MarketItem {
@@ -44,9 +48,29 @@ contract RadioDAOMarketplace is IERC721Receiver, Ownable {
         uint256 marketplaceFee
     ) {
         NEL_CONTRACT = IERC20(nelContract);
-        RDIO_CONTRACT = IERC721Enumerable(rdioContract);
+        RDIO_CONTRACT = IRadioDAONFT(rdioContract);
 
         s_marketplaceFee = marketplaceFee;
+
+        initialiseMarketItems();
+    }
+
+    //
+
+    // Constructor Helper //
+    // initialise MarketItem objects in the s_marketItems array
+    function initialiseMarketItems() internal {
+        for (uint256 i = 0; i < RDIO_CONTRACT.MAX_TOKENS(); i++) {
+            MarketItem memory newItem;
+            newItem.tokenID = i;
+            newItem.forSale = false;
+
+            // these values don't actually matter for now
+            newItem.seller = payable(RDIO_CONTRACT.ownerOf(i));
+            newItem.price = 1_000_000_000_000_000_000; // 1 NEL = 10^18 NELwei
+
+            s_marketItems.push(newItem);
+        }
     }
 
     //
