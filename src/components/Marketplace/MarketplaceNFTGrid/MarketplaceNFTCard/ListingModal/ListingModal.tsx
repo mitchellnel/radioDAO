@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
 
-import { BigNumber, Contract } from "ethers";
+import { BigNumber, Contract, utils } from "ethers";
 import { useContractFunction, useEthers } from "@usedapp/core";
 import { Modal, Box, Typography, CircularProgress } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+
+import { useApproveAndBuyNFT } from "../../../../../hooks/radioDAONFT/useApproveAndBuyNFT";
+
 import ModalCloseButton from "../../../../shared/ModalFeatures/ModalCloseButton";
 import ModalPlayer from "../../../../shared/ModalFeatures/ModalPlayer/ModalPlayer";
+
+import NelthereumABI from "../../../../../constants/NelthereumABI.json";
+import ContractAddresses from "../../../../../constants/ContractAddresses.json";
 
 const modalBoxStyle = {
   position: "absolute" as "absolute",
@@ -30,7 +36,7 @@ interface ListingModalProps {
   songArtist: string | undefined;
   imageURI: string | undefined;
   audioURI: string | undefined;
-  price: BigNumber | undefined;
+  price: BigNumber;
 }
 
 function ListingModal({
@@ -45,22 +51,28 @@ function ListingModal({
   audioURI,
   price,
 }: ListingModalProps) {
-  const { account } = useEthers();
+  const { account, chainId } = useEthers();
 
   const [loading, setLoading] = useState<boolean>(false);
 
   // work out if user is seller
   const isOwnedByUser = seller === account || seller === undefined;
 
-  // create a buyNFT function that will call the buyNFT contract function
-  const { state: buyNFTState, send: buyNFTSend } = useContractFunction(
-    nftContract,
-    "buyNFT",
-    { transactionName: "Buy NFT" }
-  );
-  const buyNFT = (tokenID: number) => {
-    buyNFTSend(tokenID);
-  };
+  // get NEL contract
+  const networkName = chainId === 5 ? "goerli" : "localhost";
+
+  const nelABI = NelthereumABI["abi"];
+  const nelInterface = new utils.Interface(nelABI);
+  const nelAddress = ContractAddresses[networkName]["nelthereum"];
+  const nelContract = new Contract(nelAddress, nelInterface);
+
+  // get function to make buy transaction
+  const { txnState: approveAndBuyNFTState, approveAndBuyNFT } =
+    useApproveAndBuyNFT(
+      nelContract,
+      nftContract,
+      utils.formatUnits(price.toString(), 18)
+    );
 
   // create a delistNFT function that will call the delistNFT contract function
   const { state: delistNFTState, send: delistNFTSend } = useContractFunction(
@@ -79,16 +91,15 @@ function ListingModal({
     if (isOwnedByUser) {
       delistNFT(tokenID);
     } else {
-      // TODO: need to approve NEL approval on front-end
-      buyNFT(tokenID);
+      approveAndBuyNFT(tokenID);
     }
   };
 
   // use transaction states to set loading button state
   useEffect(() => {
     if (
-      buyNFTState.status === "PendingSignature" ||
-      buyNFTState.status === "Mining" ||
+      approveAndBuyNFTState.status === "PendingSignature" ||
+      approveAndBuyNFTState.status === "Mining" ||
       delistNFTState.status === "PendingSignature" ||
       delistNFTState.status === "Mining"
     ) {
@@ -96,7 +107,7 @@ function ListingModal({
     } else {
       setLoading(false);
     }
-  }, [buyNFTState, delistNFTState]);
+  }, [approveAndBuyNFTState, delistNFTState]);
 
   return (
     <Modal
