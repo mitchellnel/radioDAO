@@ -177,7 +177,7 @@ function CollectionModal({
             <ModalPlayer audioURI={audioURI as string} />
           </div>
         </div>
-        <div className="flex justify-center mt-16 gap-8">
+        <div className="flex justify-center mt-16 mb-8 gap-8">
           <TextField
             required
             value={sellPrice}

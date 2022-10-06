@@ -164,7 +164,17 @@ function ListingModal({
             <ModalPlayer audioURI={audioURI as string} />
           </div>
         </div>
-        <div className="flex justify-center mt-16">
+        <div className="flex justify-center mt-16 mb-8 gap-8">
+          <Typography
+            id="modal-listing-modal-price"
+            variant="h4"
+            component="h4"
+            color="primary.contrastText"
+            fontFamily="Outfit"
+            fontWeight="600"
+          >
+            {utils.formatUnits(price, 18)} NEL
+          </Typography>
           <LoadingButton
             loading={loading}
             loadingIndicator={<CircularProgress color="secondary" size={24} />}
