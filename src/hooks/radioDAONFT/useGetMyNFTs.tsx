@@ -1,5 +1,5 @@
 import { useCall, useEthers } from "@usedapp/core";
-import { Contract, utils, BigNumber } from "ethers";
+import { Contract, utils, BigNumber, constants } from "ethers";
 
 function useGetMyNFTs(
   nftABI: any,
@@ -13,7 +13,7 @@ function useGetMyNFTs(
     useCall({
       contract: nftContract,
       method: "getUserNFTs",
-      args: [account],
+      args: [account ? account : constants.AddressZero],
     }) ?? {};
 
   if (error) {
