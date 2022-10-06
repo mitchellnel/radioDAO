@@ -5,10 +5,16 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/draft-ERC721Votes.sol";
 
 error AlreadyInitialised();
 
-contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
+contract RadioDAONFT is
+    ERC721Enumerable,
+    ERC721URIStorage,
+    ERC721Votes,
+    Ownable
+{
     // NEL Variables
     IERC20 public NEL_CONTRACT;
 
@@ -52,7 +58,7 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
         address nelContract,
         string[MAX_TOKENS] memory tokenURIs,
         uint256 marketplaceFee
-    ) ERC721("RadioDAONFT", "RDIONFT") {
+    ) ERC721("RadioDAONFT", "RDIO") EIP712("RadioDAONFT", "1") {
         _initialiseContract(nelContract, tokenURIs, marketplaceFee);
     }
 
@@ -112,7 +118,7 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
 
     //
 
-    // Overrided functions to support both ERC721Enumerable & ERC721URIStorage extensions
+    // Overrided functions to support ERC721Enumerable, ERC721URIStorage, and ERC721Votes extensions (as required by Solidity)
     function tokenURI(uint256 tokenId)
         public
         view
@@ -154,6 +160,23 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, Ownable {
         override(ERC721, ERC721URIStorage)
     {
         super._burn(tokenId);
+    }
+
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal virtual override(ERC721, ERC721Votes) {
+        super._afterTokenTransfer(from, to, tokenId);
+    }
+
+    function _afterConsecutiveTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId,
+        uint96 size
+    ) internal virtual override(ERC721, ERC721Votes) {
+        super._afterConsecutiveTokenTransfer(from, to, tokenId, size);
     }
 
     //
