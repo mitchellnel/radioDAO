@@ -18,7 +18,7 @@ const deployRadioDAO: DeployFunction = async (
   const waitConfirmations = !developmentChains.includes(network.name) ? 6 : 1;
 
   const rdioNFT = await deployments.get("RadioDAONFT");
-  const timelock = await deployments.get("RadioTimeLock");
+  const timelock = await deployments.get("RadioTimelock");
 
   const deployArgs = [rdioNFT.address, timelock.address];
 

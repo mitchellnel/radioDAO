@@ -38,15 +38,15 @@ const deployRadio: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     await verifyContract(radio.address, []);
   }
 
-  log("\nGiving ownership of the Radio to the RadioTimeLock ...");
+  log("\nGiving ownership of the Radio to the RadioTime;ock ...");
   const radioContract = await ethers.getContract("Radio");
-  const timelockContract = await ethers.getContract("RadioTimeLock");
+  const timelockContract = await ethers.getContract("RadioTimelock");
 
   const transferOwnershipTxn = await radioContract.transferOwnership(
     timelockContract.address
   );
   await transferOwnershipTxn.wait(1);
-  log("... Done! The RadioTimeLock is now the owner of the Radio contract");
+  log("... Done! The RadioTimelock is now the owner of the Radio contract");
 
   log("--------------------------------------------------");
 };

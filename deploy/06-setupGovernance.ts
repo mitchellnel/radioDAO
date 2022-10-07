@@ -11,7 +11,7 @@ const setupGovernanceContracts: DeployFunction = async (
   const { log } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const timelock = await ethers.getContract("RadioTimeLock");
+  const timelock = await ethers.getContract("RadioTimelock");
   const dao = await ethers.getContract("RadioDAO");
 
   log("--------------------------------------------------");
@@ -33,7 +33,7 @@ const setupGovernanceContracts: DeployFunction = async (
   const revokeAdminTxn = await timelock.revokeRole(adminRole, deployer);
   await revokeAdminTxn.wait(1);
   log(
-    "... Done! Now the DAO is the sole proposer of things that the RadioTimeLock can do"
+    "... Done! Now the DAO is the sole proposer of things that the RadioTimelock can do"
   );
 
   log("--------------------------------------------------");
