@@ -18,6 +18,8 @@ import { RadioDAONFTMetadata } from "../scripts/types";
 const deployRadioDAONFT: DeployFunction = async (
   hre: HardhatRuntimeEnvironment
 ) => {
+  const CONTRACT_TO_DEPLOY_NAME = "RadioDAONFT";
+
   // @ts-ignore
   const { getNamedAccounts, deployments, network } = hre;
   const { deploy, log } = deployments;
@@ -68,24 +70,29 @@ const deployRadioDAONFT: DeployFunction = async (
 
   const deployArgs = [tokenURIs];
 
-  log("Deploying RadioDAONFT contract ...");
-  const rdioNFT = await deploy("RadioDAONFT", {
+  log("--------------------------------------------------");
+  log(`\nDeploying ${CONTRACT_TO_DEPLOY_NAME} contract ...`);
+  const rdioNFT = await deploy(CONTRACT_TO_DEPLOY_NAME, {
     from: deployer,
     args: deployArgs,
     log: true,
     waitConfirmations: waitConfirmations,
   });
 
-  log("... Done! Deployed RadioDAONFT contract at", rdioNFT.address);
+  log(
+    `... Done! Deployed ${CONTRACT_TO_DEPLOY_NAME} contract at ${rdioNFT.address}\n`
+  );
 
   // verify the deployment
   if (
     !developmentChains.includes(network.name) &&
     process.env.ETHERSCAN_API_KEY
   ) {
-    log("Verifying contract ...");
+    log(`\nVerifying ${CONTRACT_TO_DEPLOY_NAME} contract ...`);
     await verifyContract(rdioNFT.address, deployArgs);
   }
+
+  log("--------------------------------------------------");
 };
 
 async function handleTokenURIs(): Promise<string[]> {
@@ -129,4 +136,4 @@ async function handleTokenURIs(): Promise<string[]> {
 }
 
 export default deployRadioDAONFT;
-deployRadioDAONFT.tags = ["all", "nft"];
+deployRadioDAONFT.tags = ["all", "marketplace", "nft"];
