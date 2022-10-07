@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol
 import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol";
 
-contract MyGovernor is
+contract RadioDAO is
     Governor,
     GovernorSettings,
     GovernorCountingSimple,
