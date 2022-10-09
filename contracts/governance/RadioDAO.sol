@@ -15,11 +15,11 @@ contract RadioDAO is
     GovernorTimelockControl
 {
     constructor(IVotes _token, TimelockController _timelock)
-        Governor("MyGovernor")
+        Governor("RadioDAO")
         GovernorSettings(
             1, /* voting delay == 1 block ~ 12s */
             10, /* voting period == 10 blocks ~ 2min */
-            0
+            1e18 /* minimum number of votes to make a proposal */
         )
         GovernorVotes(_token)
         GovernorTimelockControl(_timelock)
