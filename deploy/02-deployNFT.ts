@@ -1,5 +1,7 @@
-import { network, ethers } from "hardhat";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { DeployFunction } from "hardhat-deploy/types";
 
+import { readFileSync } from "fs";
 import * as path from "path";
 
 import { developmentChains } from "../helper-hardhat-config";
@@ -13,13 +15,13 @@ import {
 import songs from "../src/assets/songs";
 import { RadioDAONFTMetadata } from "../scripts/types";
 
-import { readFileSync } from "fs";
-import * as dotenv from "dotenv";
-dotenv.config();
+const deployRadioDAONFT: DeployFunction = async (
+  hre: HardhatRuntimeEnvironment
+) => {
+  const CONTRACT_TO_DEPLOY_NAME = "RadioDAONFT";
 
-const toWei = (num: Number) => ethers.utils.parseEther(num.toString());
-
-async function main({ getNamedAccounts, deployments }) {
+  // @ts-ignore
+  const { getNamedAccounts, deployments, network } = hre;
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
 
@@ -45,8 +47,6 @@ async function main({ getNamedAccounts, deployments }) {
     "pinata",
   ];
 
-  const initialMarketplaceFee = toWei(0.5);
-
   if (process.env.PIN_TO_PINATA === "true") {
     tokenURIs = await handleTokenURIs();
   } else {
@@ -68,29 +68,32 @@ async function main({ getNamedAccounts, deployments }) {
     });
   }
 
-  const nel = await deployments.get("Nelthereum");
+  const deployArgs = [tokenURIs];
 
-  const deployArgs = [nel.address, tokenURIs, initialMarketplaceFee];
-
-  log("Deploying RadioDAONFT contract ...");
-  const rdioNFT = await deploy("RadioDAONFT", {
+  log("--------------------------------------------------");
+  log(`\nDeploying ${CONTRACT_TO_DEPLOY_NAME} contract ...`);
+  const rdioNFT = await deploy(CONTRACT_TO_DEPLOY_NAME, {
     from: deployer,
     args: deployArgs,
     log: true,
     waitConfirmations: waitConfirmations,
   });
 
-  log("... Done! Deployed RadioDAONFT contract at", rdioNFT.address);
+  log(
+    `... Done! Deployed ${CONTRACT_TO_DEPLOY_NAME} contract at ${rdioNFT.address}\n`
+  );
 
   // verify the deployment
   if (
     !developmentChains.includes(network.name) &&
     process.env.ETHERSCAN_API_KEY
   ) {
-    log("Verifying contract ...");
+    log(`\nVerifying ${CONTRACT_TO_DEPLOY_NAME} contract ...`);
     await verifyContract(rdioNFT.address, deployArgs);
   }
-}
+
+  log("--------------------------------------------------");
+};
 
 async function handleTokenURIs(): Promise<string[]> {
   let tokenURIs: string[] = [];
@@ -132,4 +135,5 @@ async function handleTokenURIs(): Promise<string[]> {
   return tokenURIs;
 }
 
-export default main;
+export default deployRadioDAONFT;
+deployRadioDAONFT.tags = ["all", "marketplace", "nft"];
