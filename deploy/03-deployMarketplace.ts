@@ -4,6 +4,7 @@ import { ethers } from "hardhat";
 
 import { developmentChains } from "../helper-hardhat-config";
 import { verifyContract } from "../scripts/utils";
+import { BigNumber } from "ethers";
 
 const toWei = (num: Number) => ethers.utils.parseEther(num.toString());
 
@@ -37,6 +38,39 @@ const deployMarketplace: DeployFunction = async (
 
   log(
     `... Done! Deployed ${CONTRACT_TO_DEPLOY_NAME} contract at ${rdioMarketplace.address}\n`
+  );
+
+  const nelContract = await ethers.getContract("Nelthereum");
+  const rdioNFTContract = await ethers.getContract("RadioDAONFT");
+  const rdioMarketplaceContract = await ethers.getContract(
+    "RadioDAOMarketplace"
+  );
+
+  const MAX_TOKENS = await rdioNFTContract.getMaxTokens();
+
+  log(`\nListing ${MAX_TOKENS} RadioDAONFTs on the RadioDAOMarketplace`);
+
+  const initialSellPrice = toWei(1);
+
+  // approve all NEL marketplace fee transfers
+  await nelContract.approve(
+    rdioMarketplace.address,
+    BigNumber.from(initialMarketplaceFee).mul(MAX_TOKENS)
+  );
+
+  for (let i = 0; i < MAX_TOKENS; i++) {
+    log(`\tListing token ${i} ...`);
+
+    // approve NFT transfer
+    await rdioNFTContract.approve(rdioMarketplace.address, i);
+
+    // make the sale
+    await rdioMarketplaceContract.sellNFT(i, initialSellPrice);
+    log("\t... Done!");
+  }
+
+  log(
+    `\n... Done! Successfully listed all ${MAX_TOKENS} RadioDAONFTs on the RadioDAOMarketplace`
   );
 
   // verify the deployment
