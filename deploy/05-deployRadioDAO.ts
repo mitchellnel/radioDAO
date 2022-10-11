@@ -41,7 +41,7 @@ const deployRadioDAO: DeployFunction = async (
     process.env.ETHERSCAN_API_KEY
   ) {
     log(`\nVerifying ${CONTRACT_TO_DEPLOY_NAME} contract ...`);
-    await verifyContract(dao.address, []);
+    await verifyContract(dao.address, deployArgs);
   }
 
   log("--------------------------------------------------");

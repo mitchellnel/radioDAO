@@ -38,7 +38,7 @@ const deployRadioTimelock: DeployFunction = async (
     process.env.ETHERSCAN_API_KEY
   ) {
     log(`\nVerifying ${CONTRACT_TO_DEPLOY_NAME} contract ...`);
-    await verifyContract(timelock.address, []);
+    await verifyContract(timelock.address, deployArgs);
   }
 
   log("--------------------------------------------------");
