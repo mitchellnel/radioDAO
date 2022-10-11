@@ -83,6 +83,7 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, ERC721Votes {
         address to,
         uint256 tokenId
     ) internal virtual override(ERC721, ERC721Enumerable) {
+        delegate(msg.sender);
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
