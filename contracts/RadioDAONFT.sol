@@ -54,6 +54,9 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, ERC721Votes {
             _setTokenURI(newTokenID, newTokenURI);
             emit NFTTokenURISet(newTokenID, newTokenURI);
         }
+
+        // have deployer self-delegate their voting power
+        delegate(msg.sender);
     }
 
     //
@@ -83,7 +86,6 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, ERC721Votes {
         address to,
         uint256 tokenId
     ) internal virtual override(ERC721, ERC721Enumerable) {
-        delegate(msg.sender);
         super._beforeTokenTransfer(from, to, tokenId);
     }
 

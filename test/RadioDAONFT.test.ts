@@ -75,6 +75,10 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
             })
           );
         });
+
+        it("Should self-delegate the deployer a voting power equal to MAX_TOKENS", async () => {
+          expect(await rdioNFT.getVotes(deployer.address)).to.equal(MAX_TOKENS);
+        });
       });
 
       describe("Storage Variable Getters [that haven't implicitly been tested by prior tests", () => {
