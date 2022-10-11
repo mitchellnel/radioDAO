@@ -22,6 +22,10 @@ import { moveBlocks, moveTime } from "../scripts/utils";
 !developmentChains.includes(network.name)
   ? describe.skip
   : describe("RadioDAO Integration Tests", () => {
+      const AGAINST_VOTE = 0;
+      const FOR_VOTE = 1;
+      const ABSTAIN_VOTE = 2;
+
       let deployer: SignerWithAddress;
       let rdioNFT: RadioDAONFT;
       let dao: RadioDAO;
@@ -43,41 +47,6 @@ import { moveBlocks, moveTime } from "../scripts/utils";
         votingDelay = await dao.votingDelay();
         votingPeriod = await dao.votingPeriod();
         minDelay = await timelock.getMinDelay();
-
-        console.log(
-          "pre-delegate deployer votes: ",
-          await rdioNFT.getVotes(deployer.address)
-        );
-        await rdioNFT.delegate(deployer.address);
-        console.log(
-          "deployer votes: ",
-          await rdioNFT.getVotes(deployer.address)
-        );
-
-        await rdioNFT.transferFrom(
-          deployer.address,
-          "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-          "0"
-        );
-
-        console.log(
-          "after transfer deployer votes: ",
-          await rdioNFT.getVotes(deployer.address)
-        );
-        console.log(
-          "after transfer user1 votes: ",
-          await rdioNFT.getVotes("0x70997970C51812dc3A010C7d01b50e0d17dc79C8")
-        );
-
-        await rdioNFT.delegate("0x70997970C51812dc3A010C7d01b50e0d17dc79C8");
-        console.log(
-          "deployer votes: ",
-          await rdioNFT.getVotes(deployer.address)
-        );
-        console.log(
-          "after delegate user1 votes: ",
-          await rdioNFT.getVotes("0x70997970C51812dc3A010C7d01b50e0d17dc79C8")
-        );
       });
 
       describe("Radio Functionality", () => {
@@ -89,7 +58,7 @@ import { moveBlocks, moveTime } from "../scripts/utils";
       });
 
       describe("Governance Workflow", () => {
-        it("Should propose, vote, wait, queue, and then execute", async () => {
+        it("Should propose, vote FOR, wait, queue, and then execute", async () => {
           // propose
           console.log("\nProposing ...");
           const encodedFunctionCall = radio.interface.encodeFunctionData(
@@ -110,6 +79,9 @@ import { moveBlocks, moveTime } from "../scripts/utils";
           const proposalId = proposeReceipt.events![0].args!.proposalId;
           let proposalState = await dao.state(proposalId);
 
+          // proposal state should be 0 == Pending
+          assert.equal(proposalState.toString(), "0");
+
           console.log(
             `Current state of Proposal ${proposalId} is: ${proposalState}`
           );
@@ -122,13 +94,14 @@ import { moveBlocks, moveTime } from "../scripts/utils";
           console.log("\nVoting ...");
           const voteTxn = await dao.castVoteWithReason(
             proposalId,
-            2,
+            FOR_VOTE,
             "This is my favourite song"
           );
           await voteTxn.wait(1);
 
           proposalState = await dao.state(proposalId);
 
+          // proposal state should be 1 == Active
           assert.equal(proposalState.toString(), "1");
 
           console.log(
@@ -138,6 +111,13 @@ import { moveBlocks, moveTime } from "../scripts/utils";
           // wait
           console.log("\n... Waiting ...\n");
           await moveBlocks(votingPeriod.add(10).toNumber());
+
+          expect(await dao.hasVoted(proposalId, deployer.address)).to.be.true;
+
+          proposalState = await dao.state(proposalId);
+
+          // proposal state should be 4 == Succeeded
+          assert.equal(proposalState.toString(), "4");
 
           console.log(
             `Current state of Proposal ${proposalId} is: ${proposalState}`
@@ -163,6 +143,10 @@ import { moveBlocks, moveTime } from "../scripts/utils";
           await moveBlocks(1);
 
           proposalState = await dao.state(proposalId);
+
+          // proposal state should be 5 == Queued
+          assert.equal(proposalState.toString(), "5");
+
           console.log(
             `Current state of Proposal ${proposalId} is: ${proposalState}`
           );
@@ -177,7 +161,27 @@ import { moveBlocks, moveTime } from "../scripts/utils";
           );
           await executeTxn.wait(1);
 
+          proposalState = await dao.state(proposalId);
+
+          // proposal state should be 7 == Executed
+          assert.equal(proposalState.toString(), "7");
+
+          console.log(
+            `Current state of Proposal ${proposalId} is: ${proposalState}`
+          );
+
           expect(await radio.getNextSong()).to.equal("song uri");
         });
       });
     });
+
+/* FYI, proposal states are as follows:
+    - 0 == Pending
+    - 1 == Active
+    - 2 == Cancelled
+    - 3 == Defeated
+    - 4 == Suceeded
+    - 5 == Queued
+    - 6 == Expired
+    - 7 == Executed
+*/
