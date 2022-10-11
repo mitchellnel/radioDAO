@@ -26,6 +26,8 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
       const FOR_VOTE = 1;
       const ABSTAIN_VOTE = 2;
 
+      const INITIAL_NFT_BUY_PRICE = toWei(1);
+
       let deployer: SignerWithAddress, user1: SignerWithAddress;
       let nel: Nelthereum;
       let rdioMarketplace: RadioDAOMarketplace;
@@ -55,50 +57,6 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
         await nel.connect(user1).requestTokens();
       });
 
-      describe("Transfer of Voting Power", () => {
-        let originalSellerVotingPower: BigNumber,
-          originalBuyerVotingPower: BigNumber;
-        beforeEach(async () => {
-          await nel
-            .connect(deployer)
-            .approve(
-              rdioMarketplace.address,
-              await rdioMarketplace.getMarketplaceFee()
-            );
-          await nel.connect(user1).approve(rdioMarketplace.address, toWei(1));
-
-          await rdioNFT.connect(deployer).approve(rdioMarketplace.address, 3);
-
-          originalSellerVotingPower = await rdioNFT.getVotes(deployer.address);
-
-          originalBuyerVotingPower = await rdioNFT.getVotes(user1.address);
-
-          await rdioMarketplace.connect(deployer).sellNFT(3, toWei(1));
-        });
-
-        it("Should correctly transfer the voting power to a buyer on the marketplace", async () => {
-          const newSellerVotingPower = await rdioNFT.getVotes(deployer.address);
-
-          assert.equal(
-            originalSellerVotingPower.sub(newSellerVotingPower).toString(),
-            "1"
-          );
-
-          // user1 buys the NFT
-          await rdioMarketplace.connect(user1).buyNFT(3);
-
-          // user 1 registers to vote in the DAO
-          await rdioNFT.connect(user1).delegate(user1.address);
-
-          const newBuyerVotingPower = await rdioNFT.getVotes(user1.address);
-
-          assert.equal(
-            newBuyerVotingPower.sub(originalBuyerVotingPower).toString(),
-            "1"
-          );
-        });
-      });
-
       describe("Radio Functionality", () => {
         it("Should only allow the Radio's state to be changed through governance", async () => {
           await expect(
@@ -108,6 +66,17 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
       });
 
       describe("Governance Workflow", () => {
+        beforeEach(async () => {
+          // deployer delists NFT from marketplace
+          await rdioMarketplace.connect(deployer).delistNFT(3);
+
+          // user1 buys NFT from marketplace
+          await nel
+            .connect(user1)
+            .approve(rdioMarketplace.address, INITIAL_NFT_BUY_PRICE);
+          await rdioMarketplace.connect(user1).buyNFT(9);
+        });
+
         it("Should propose, vote FOR, wait, queue, and then execute", async () => {
           // propose
           console.log("\n\t\tProposing ...");
