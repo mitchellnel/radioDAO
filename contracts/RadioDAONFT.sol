@@ -125,6 +125,10 @@ contract RadioDAONFT is ERC721Enumerable, ERC721URIStorage, ERC721Votes {
     //
 
     // ERC721 Variable Getters //
+    function getMaxTokens() public pure returns (uint256) {
+        return MAX_TOKENS;
+    }
+
     function getInitialisedFlag() public view returns (bool) {
         return s_isInitialised;
     }
