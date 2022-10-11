@@ -1,7 +1,14 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { BigNumber, BigNumberish, Contract, ContractFactory } from "ethers";
-import { network, ethers } from "hardhat";
+import { BigNumber, BigNumberish } from "ethers";
+import { deployments, ethers, network } from "hardhat";
+
+import {
+  Nelthereum,
+  RadioDAONFT,
+  RadioDAOMarketplace,
+} from "../typechain-types";
+
 import { developmentChains } from "../helper-hardhat-config";
 import { MarketItem } from "../scripts/types";
 
@@ -12,24 +19,6 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
 !developmentChains.includes(network.name)
   ? describe.skip
   : describe("RadioDAOMarketplace Unit Tests", () => {
-      const testURIs = [
-        "uri_1",
-        "uri_2",
-        "uri_3",
-        "uri_4",
-        "uri_5",
-        "uri_6",
-        "uri_7",
-        "uri_8",
-        "uri_9",
-        "uri_10",
-        "uri_11",
-        "uri_12",
-        "uri_13",
-        "uri_14",
-        "uri_15",
-        "uri_16",
-      ];
       const marketplaceFee = toWei(0.5);
       const initialNFTBuyPrice = toWei(1);
       const MAX_TOKENS = 16;
@@ -37,36 +26,26 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
       let owner: SignerWithAddress,
         user1: SignerWithAddress,
         user2: SignerWithAddress;
-      let NELFactory: ContractFactory,
-        RadioDAONFTFactory: ContractFactory,
-        RadioDAOMarketplaceFactory: ContractFactory;
-      let nel: Contract, rdioNFT: Contract, rdioMarketplace: Contract;
+      let nel: Nelthereum;
+      let rdioNFT: RadioDAONFT;
+      let rdioMarketplace: RadioDAOMarketplace;
 
       beforeEach(async () => {
         [owner, user1, user2] = await ethers.getSigners();
 
-        NELFactory = await ethers.getContractFactory("Nelthereum");
-        RadioDAONFTFactory = await ethers.getContractFactory("RadioDAONFT");
-        RadioDAOMarketplaceFactory = await ethers.getContractFactory(
-          "RadioDAOMarketplace"
-        );
+        await deployments.fixture(["marketplace"]);
 
-        nel = await NELFactory.deploy();
+        nel = await ethers.getContract("Nelthereum");
+        rdioNFT = await ethers.getContract("RadioDAONFT");
+        rdioMarketplace = await ethers.getContract("RadioDAOMarketplace");
 
         for (let i = 0; i < 10; i++) {
           await nel.connect(user1).requestTokens();
           await nel.connect(user2).requestTokens();
         }
+
         expect(await nel.balanceOf(user1.address)).to.equal(toWei(100));
         expect(await nel.balanceOf(user2.address)).to.equal(toWei(100));
-
-        rdioNFT = await RadioDAONFTFactory.deploy(testURIs);
-
-        rdioMarketplace = await RadioDAOMarketplaceFactory.deploy(
-          nel.address,
-          rdioNFT.address,
-          marketplaceFee
-        );
       });
 
       describe("Deployment, Construction, Initialisation and All Minting", () => {
@@ -101,40 +80,6 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
       });
 
       describe("Marketplace Functionality", () => {
-        // describe("Getters", () => {
-        //   it("getAllNFTsForSale should return an array of MAX_TOKENS items that are currently up for sale, since none have bene bought yet", async () => {
-        //     const itemsForSale = await rdioNFT.getAllNFTsForSale();
-        //     expect(itemsForSale.length).to.equal(16);
-        //   });
-
-        //   it("getAllNFTsForSale should return all MarketItems that have forSale set to true", async () => {
-        //     const soldItems = [3, 6, 9];
-        //     await nel
-        //       .connect(user1)
-        //       .approve(rdioNFT.address, initialNFTBuyPrice.mul(3));
-        //     await rdioNFT
-        //       .connect(user1)
-        //       .buyNFT(3, { value: initialNFTBuyPrice });
-        //     await rdioNFT
-        //       .connect(user1)
-        //       .buyNFT(6, { value: initialNFTBuyPrice });
-        //     await rdioNFT
-        //       .connect(user1)
-        //       .buyNFT(9, { value: initialNFTBuyPrice });
-
-        //     const unsoldNFTs = await rdioNFT.connect(user1).getAllNFTsForSale();
-
-        //     expect(unsoldNFTs.length).to.equal(13);
-
-        //     // check that the IDs of the unsold NFTs are correct
-        //     expect(
-        //       unsoldNFTs.every(
-        //         (i) => !soldItems.some((j) => j === i.tokenID.toNumber())
-        //       )
-        //     ).to.be.true;
-        //   });
-        // });
-
         describe("Setters", () => {
           it("Marketplace owner should be able to change the marketplace fee", async () => {
             await rdioMarketplace.updateMarketplaceFee(toWei(0.2));
@@ -459,18 +404,12 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
               );
 
             await rdioNFT.connect(user1).approve(rdioMarketplace.address, 0);
-            console.log("approve 1");
             await rdioNFT.connect(user1).approve(rdioMarketplace.address, 3);
-            console.log("approve 2");
             await rdioNFT.connect(user1).approve(rdioMarketplace.address, 5);
-            console.log("approve 3");
 
             await rdioMarketplace.connect(user1).sellNFT(0, initialNFTBuyPrice);
-            console.log("sell 1");
             await rdioMarketplace.connect(user1).sellNFT(3, initialNFTBuyPrice);
-            console.log("sell 2");
             await rdioMarketplace.connect(user1).sellNFT(5, initialNFTBuyPrice);
-            console.log("sell 3");
           });
 
           it("getAllNFTsForSale should return an array of all the NFTs that have been listed for sale", async () => {

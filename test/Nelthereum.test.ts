@@ -1,7 +1,10 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { BigNumberish, Contract, ContractFactory } from "ethers";
-import { network, ethers } from "hardhat";
+import { BigNumberish } from "ethers";
+import { deployments, ethers, network } from "hardhat";
+
+import { Nelthereum } from "../typechain-types";
+
 import { developmentChains } from "../helper-hardhat-config";
 
 const toWei = (num: Number) => ethers.utils.parseEther(num.toString());
@@ -19,15 +22,14 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
       let owner: SignerWithAddress,
         user1: SignerWithAddress,
         user2: SignerWithAddress;
-      let NELFactory: ContractFactory;
-      let nel: Contract;
+      let nel: Nelthereum;
 
       beforeEach(async () => {
         [owner, user1, user2] = await ethers.getSigners();
 
-        NELFactory = await ethers.getContractFactory("Nelthereum");
+        await deployments.fixture(["nel"]);
 
-        nel = await NELFactory.deploy();
+        nel = await ethers.getContract("Nelthereum");
       });
 
       describe("Deployment and Construction", () => {
