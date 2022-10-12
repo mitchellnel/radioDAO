@@ -4,12 +4,16 @@ import { BigNumber, Contract, ethers, utils } from "ethers";
 
 import { Card } from "@web3uikit/core";
 
-import RadioDAONFTABI from "../../../../constants/RadioDAONFTABI.json";
 import { useTokenURI } from "../../../../hooks/radioDAONFT";
-import { RadioDAONFTMetadata } from "../../../../../scripts/types";
+
 import ListingModal from "./ListingModal/ListingModal";
 
+import RadioDAONFTABI from "../../../../constants/RadioDAONFTABI.json";
+import RadioDAOMarketplaceABI from "../../../../constants/RadioDAOMarketplaceABI.json";
+import { RadioDAONFTMetadata } from "../../../../../scripts/types";
+
 interface MarketplaceNFTCardProps {
+  marketplaceAddress: string;
   rdioNFTAddress: string;
   tokenID: number;
   seller: string;
@@ -18,6 +22,7 @@ interface MarketplaceNFTCardProps {
 }
 
 function MarketplaceNFTCard({
+  marketplaceAddress,
   rdioNFTAddress,
   tokenID,
   seller,
@@ -37,6 +42,14 @@ function MarketplaceNFTCard({
   const rdioNFTABI = RadioDAONFTABI["abi"];
   const rdioNFTInterface = new utils.Interface(rdioNFTABI);
   const rdioNFTContract = new Contract(rdioNFTAddress, rdioNFTInterface);
+
+  // create RadioDAOMarketplace contract object
+  const marketplaceABI = RadioDAOMarketplaceABI["abi"];
+  const marketplaceInterface = new utils.Interface(marketplaceABI);
+  const marketplaceContract = new Contract(
+    marketplaceAddress,
+    marketplaceInterface
+  );
 
   // get the token URI using useTokenURI hook
   const tokenURI = useTokenURI(rdioNFTABI, rdioNFTAddress, tokenID);
@@ -85,6 +98,7 @@ function MarketplaceNFTCard({
           isVisible={showModal}
           onClose={hideModal}
           nftContract={rdioNFTContract}
+          marketplaceContract={marketplaceContract}
           tokenID={tokenID}
           seller={seller}
           songTitle={songTitle}

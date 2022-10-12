@@ -4,14 +4,14 @@ import { Contract, utils } from "ethers";
 import { Card } from "@web3uikit/core";
 import { RadioDAONFTMetadata } from "../../../../../scripts/types";
 
-import {
-  useGetMarketplaceFee,
-  useTokenURI,
-} from "../../../../hooks/radioDAONFT";
+import { useTokenURI } from "../../../../hooks/radioDAONFT";
+import { useGetMarketplaceFee } from "../../../../hooks/radioDAOMarketplace";
 
 import CollectionModal from "./CollectionModal/CollectionModal";
 
 import RadioDAONFTABI from "../../../../constants/RadioDAONFTABI.json";
+import RadioDAOMarketplaceABI from "../../../../constants/RadioDAOMarketplaceABI.json";
+import ContractAddresses from "../../../../constants/ContractAddresses.json";
 
 interface CollectionNFTCardProps {
   rdioNFTAddress: string;
@@ -22,7 +22,8 @@ function CollectionNFTCard({
   rdioNFTAddress,
   tokenID,
 }: CollectionNFTCardProps) {
-  const { active } = useEthers();
+  const { active, chainId } = useEthers();
+  const networkName = chainId === 5 ? "goerli" : "localhost";
 
   const [songTitle, setSongTitle] = useState<string>("");
   const [songArtist, setSongArtist] = useState<string>("");
@@ -37,8 +38,21 @@ function CollectionNFTCard({
   const rdioNFTInterface = new utils.Interface(rdioNFTABI);
   const rdioNFTContract = new Contract(rdioNFTAddress, rdioNFTInterface);
 
+  // create RadioDAOMarketplace contract object
+  const marketplaceAddress =
+    ContractAddresses[networkName]["RadioDAOMarketplace"];
+  const marketplaceABI = RadioDAOMarketplaceABI["abi"];
+  const marketplaceInterface = new utils.Interface(marketplaceABI);
+  const marketplaceContract = new Contract(
+    marketplaceAddress,
+    marketplaceInterface
+  );
+
   // get the marketplace fee using the useGetMarketplaceFee hook
-  const marketplaceFee = useGetMarketplaceFee(rdioNFTABI, rdioNFTAddress);
+  const marketplaceFee = useGetMarketplaceFee(
+    marketplaceABI,
+    marketplaceAddress
+  );
 
   // get the token URI using useTokenURI hook
   const tokenURI = useTokenURI(rdioNFTABI, rdioNFTAddress, tokenID);
@@ -81,6 +95,7 @@ function CollectionNFTCard({
           isVisible={showModal}
           onClose={hideModal}
           nftContract={rdioNFTContract}
+          marketplaceContract={marketplaceContract}
           tokenID={tokenID}
           songTitle={songTitle}
           songArtist={songArtist}

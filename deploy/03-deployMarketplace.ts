@@ -53,19 +53,25 @@ const deployMarketplace: DeployFunction = async (
   const initialSellPrice = toWei(1);
 
   // approve all NEL marketplace fee transfers
-  await nelContract.approve(
+  const approveNELTxn = await nelContract.approve(
     rdioMarketplace.address,
     BigNumber.from(initialMarketplaceFee).mul(MAX_TOKENS)
   );
+  await approveNELTxn.wait(1);
 
-  for (let i = 0; i < MAX_TOKENS; i++) {
+  for (let i = 3; i < MAX_TOKENS; i++) {
     log(`\tListing token ${i} ...`);
 
     // approve NFT transfer
-    await rdioNFTContract.approve(rdioMarketplace.address, i);
+    const approveNFTTxn = await rdioNFTContract.approve(
+      rdioMarketplace.address,
+      i
+    );
+    await approveNFTTxn.wait(1);
 
     // make the sale
-    await rdioMarketplaceContract.sellNFT(i, initialSellPrice);
+    const sellTxn = await rdioMarketplaceContract.sellNFT(i, initialSellPrice);
+    await sellTxn.wait(1);
     log("\t... Done!");
   }
 
@@ -79,11 +85,11 @@ const deployMarketplace: DeployFunction = async (
     process.env.ETHERSCAN_API_KEY
   ) {
     log(`\nVerifying ${CONTRACT_TO_DEPLOY_NAME} contract ...`);
-    await verifyContract(rdioMarketplace.address, []);
+    await verifyContract(rdioMarketplace.address, deployArgs);
   }
 
   log("--------------------------------------------------");
 };
 
 export default deployMarketplace;
-deployMarketplace.tags = ["all", "marketplace"];
+deployMarketplace.tags = ["all", "marketplace", "onlyMarketplace"];

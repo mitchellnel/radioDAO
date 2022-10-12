@@ -3,15 +3,18 @@ import { Contract, utils } from "ethers";
 import { MarketItem } from "../../../scripts/types";
 
 function useGetAllNFTsForSale(
-  nftABI: any,
-  nftAddress: string
+  marketplaceABI: any,
+  marketplaceAddress: string
 ): MarketItem[] | undefined {
-  const nftInterface = new utils.Interface(nftABI);
-  const nftContract = new Contract(nftAddress, nftInterface);
+  const marketplaceInterface = new utils.Interface(marketplaceABI);
+  const marketplaceContract = new Contract(
+    marketplaceAddress,
+    marketplaceInterface
+  );
 
   const { value, error } =
     useCall({
-      contract: nftContract,
+      contract: marketplaceContract,
       method: "getAllNFTsForSale",
       args: [],
     }) ?? {};

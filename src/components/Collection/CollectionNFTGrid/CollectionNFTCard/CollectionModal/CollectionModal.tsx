@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
-import { useApproveAndSellNFT } from "../../../../../hooks/radioDAONFT";
+import { useApproveAndSellNFT } from "../../../../../hooks/radioDAOMarketplace";
 
 import ModalCloseButton from "../../../../shared/ModalFeatures/ModalCloseButton";
 import ModalPlayer from "../../../../shared/ModalFeatures/ModalPlayer/ModalPlayer";
@@ -36,6 +36,7 @@ interface CollectionModalProps {
   isVisible: boolean;
   onClose: () => void;
   nftContract: Contract;
+  marketplaceContract: Contract;
   tokenID: number;
   songTitle: string | undefined;
   songArtist: string | undefined;
@@ -48,6 +49,7 @@ function CollectionModal({
   isVisible,
   onClose,
   nftContract,
+  marketplaceContract,
   tokenID,
   songTitle,
   songArtist,
@@ -66,12 +68,16 @@ function CollectionModal({
 
   const nelABI = NelthereumABI["abi"];
   const nelInterface = new utils.Interface(nelABI);
-  const nelAddress = ContractAddresses[networkName]["nelthereum"];
+  const nelAddress = ContractAddresses[networkName]["Nelthereum"];
   const nelContract = new Contract(nelAddress, nelInterface);
 
   // get function to make sell transaction
-  const { txnState: approveAndSellNFTState, approveAndSellNFT } =
-    useApproveAndSellNFT(nelContract, nftContract, marketplaceFee);
+  const { approveAndSellNFTState, approveAndSellNFT } = useApproveAndSellNFT(
+    nelContract,
+    nftContract,
+    marketplaceContract,
+    marketplaceFee
+  );
 
   // handler for when the modal button is pressed
   const handleModalButtonClick = async (priceToSell: string) => {
@@ -106,9 +112,6 @@ function CollectionModal({
   useEffect(() => {
     if (Number(sellPrice)) {
       const sellPrice_Number: Number = Number(sellPrice);
-
-      console.log("sp", sellPrice);
-      console.log("sp_N", sellPrice_Number);
 
       if (sellPrice_Number <= 0) {
         setSellPriceFieldError(true);
