@@ -48,7 +48,7 @@ async function writeNewContractABIs() {
       return;
     }
 
-    abiObj["abi"].push(deploymentData["abi"]);
+    abiObj["abi"] = deploymentData["abi"];
 
     const abiJSON = JSON.stringify(abiObj);
 
