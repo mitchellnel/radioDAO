@@ -3,20 +3,25 @@ import React, { useEffect, useState } from "react";
 import { useEthers, useNotifications } from "@usedapp/core";
 
 import { useGetAllNFTsForSale } from "../../../hooks/radioDAOMarketplace";
+
 import MarketplaceNFTCard from "./MarketplaceNFTCard/MarketplaceNFTCard";
-import RadioDAONFTABI from "../../../constants/RadioDAONFTABI.json";
-import ContractAddresses from "../../../constants/ContractAddresses.json";
 import NotificationModal from "../../shared/NotificationModal/NotificationModal";
+
+import RadioDAOMarketplaceABI from "../../../constants/RadioDAOMarketplaceABI.json";
+import ContractAddresses from "../../../constants/ContractAddresses.json";
 import { SuccessNotification } from "../../../types";
 
 function MarketplaceNFTGrid() {
   const { chainId } = useEthers();
   const networkName = chainId === 5 ? "goerli" : "localhost";
 
-  const nftABI = RadioDAONFTABI["abi"];
-  const nftAddress = ContractAddresses[networkName]["RadioDAONFT"];
+  const rdioNFTAddress = ContractAddresses[networkName]["RadioDAONFT"];
+  const marketplaceAddress =
+    ContractAddresses[networkName]["RadioDAOMarketplace"];
 
-  const forSaleNFTs = useGetAllNFTsForSale(nftABI, nftAddress);
+  const marketplaceABI = RadioDAOMarketplaceABI["abi"];
+
+  const forSaleNFTs = useGetAllNFTsForSale(marketplaceABI, marketplaceAddress);
 
   const { notifications } = useNotifications();
   const [successNotification, setSuccessNotification] =
@@ -59,7 +64,8 @@ function MarketplaceNFTGrid() {
             return (
               <MarketplaceNFTCard
                 key={nft.tokenID.toNumber()}
-                rdioNFTAddress={nftAddress}
+                marketplaceAddress={marketplaceAddress}
+                rdioNFTAddress={rdioNFTAddress}
                 tokenID={nft.tokenID.toNumber()}
                 seller={nft.seller}
                 price={nft.price}

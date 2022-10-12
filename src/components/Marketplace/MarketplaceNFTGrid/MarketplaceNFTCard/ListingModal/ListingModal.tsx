@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 
 import { BigNumber, Contract, utils } from "ethers";
-import { useContractFunction, useEthers } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 import { Modal, Box, Typography, CircularProgress } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
-import { useApproveAndBuyNFT } from "../../../../../hooks/radioDAOMarketplace/useApproveAndBuyNFT";
+import {
+  useApproveAndBuyNFT,
+  useDelistNFT,
+} from "../../../../../hooks/radioDAOMarketplace";
 
 import ModalCloseButton from "../../../../shared/ModalFeatures/ModalCloseButton";
 import ModalPlayer from "../../../../shared/ModalFeatures/ModalPlayer/ModalPlayer";
@@ -30,6 +33,7 @@ interface ListingModalProps {
   isVisible: boolean;
   onClose: () => void;
   nftContract: Contract;
+  marketplaceContract: Contract;
   tokenID: number;
   seller: string | undefined;
   songTitle: string | undefined;
@@ -43,6 +47,7 @@ function ListingModal({
   isVisible,
   onClose,
   nftContract,
+  marketplaceContract,
   tokenID,
   seller,
   songTitle,
@@ -67,22 +72,14 @@ function ListingModal({
   const nelContract = new Contract(nelAddress, nelInterface);
 
   // get function to make buy transaction
-  const { txnState: approveAndBuyNFTState, approveAndBuyNFT } =
-    useApproveAndBuyNFT(
-      nelContract,
-      nftContract,
-      utils.formatUnits(price.toString(), 18)
-    );
-
-  // create a delistNFT function that will call the delistNFT contract function
-  const { state: delistNFTState, send: delistNFTSend } = useContractFunction(
-    nftContract,
-    "delistNFT",
-    { transactionName: "Delist NFT" }
+  const { approveAndBuyNFTState, approveAndBuyNFT } = useApproveAndBuyNFT(
+    nelContract,
+    marketplaceContract,
+    utils.formatUnits(price.toString(), 18)
   );
-  const delistNFT = (tokenID: number) => {
-    delistNFTSend(tokenID);
-  };
+
+  // get function to make delist transaction
+  const { delistNFTState, delistNFT } = useDelistNFT(marketplaceContract);
 
   // handler for when the modal button is pressed
   const handleModalButtonClick = async (isOwnedByUser: boolean) => {

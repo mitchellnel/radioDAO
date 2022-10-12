@@ -4,7 +4,7 @@ import { Contract, utils } from "ethers";
 
 function useApproveAndBuyNFT(
   nelContract: Contract,
-  nftContract: Contract,
+  marketplaceContract: Contract,
   amountToApprove: string
 ) {
   // we will use this hook to make an approve transaction for NEL and then
@@ -22,14 +22,14 @@ function useApproveAndBuyNFT(
     setTokenIDToSell(tokenID);
 
     return approveNELSend(
-      nftContract.address,
+      marketplaceContract.address,
       utils.parseUnits(amountToApprove, 18)
     );
   };
 
   // if approve transaction is successful, make the buyNFT transaction
   const { state: buyNFTState, send: buyNFTSend } = useContractFunction(
-    nftContract,
+    marketplaceContract,
     "buyNFT",
     { transactionName: "Buy NFT" }
   );
@@ -53,7 +53,7 @@ function useApproveAndBuyNFT(
     }
   }, [approveNELState, buyNFTState]);
 
-  return { txnState, approveAndBuyNFT };
+  return { approveAndBuyNFTState: txnState, approveAndBuyNFT };
 }
 
 export { useApproveAndBuyNFT };
