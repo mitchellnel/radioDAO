@@ -5,7 +5,7 @@ import { useContractFunction, useEthers } from "@usedapp/core";
 import { Modal, Box, Typography, CircularProgress } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
-import { useApproveAndBuyNFT } from "../../../../../hooks/radioDAONFT/useApproveAndBuyNFT";
+import { useApproveAndBuyNFT } from "../../../../../hooks/radioDAOMarketplace/useApproveAndBuyNFT";
 
 import ModalCloseButton from "../../../../shared/ModalFeatures/ModalCloseButton";
 import ModalPlayer from "../../../../shared/ModalFeatures/ModalPlayer/ModalPlayer";

@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
-import { useApproveAndSellNFT } from "../../../../../hooks/radioDAONFT";
+import { useApproveAndSellNFT } from "../../../../../hooks/radioDAOMarketplace";
 
 import ModalCloseButton from "../../../../shared/ModalFeatures/ModalCloseButton";
 import ModalPlayer from "../../../../shared/ModalFeatures/ModalPlayer/ModalPlayer";

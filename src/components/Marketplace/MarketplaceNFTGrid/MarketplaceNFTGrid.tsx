@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { useEthers, useNotifications } from "@usedapp/core";
 
-import { useGetAllNFTsForSale } from "../../../hooks/radioDAONFT";
+import { useGetAllNFTsForSale } from "../../../hooks/radioDAOMarketplace";
 import MarketplaceNFTCard from "./MarketplaceNFTCard/MarketplaceNFTCard";
 import RadioDAONFTABI from "../../../constants/RadioDAONFTABI.json";
 import ContractAddresses from "../../../constants/ContractAddresses.json";

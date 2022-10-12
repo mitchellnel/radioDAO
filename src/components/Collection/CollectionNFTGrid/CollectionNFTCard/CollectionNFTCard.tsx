@@ -4,10 +4,9 @@ import { Contract, utils } from "ethers";
 import { Card } from "@web3uikit/core";
 import { RadioDAONFTMetadata } from "../../../../../scripts/types";
 
-import {
-  useGetMarketplaceFee,
-  useTokenURI,
-} from "../../../../hooks/radioDAONFT";
+import { useTokenURI } from "../../../../hooks/radioDAONFT";
+
+import { useGetMarketplaceFee } from "../../../../hooks/radioDAOMarketplace";
 
 import CollectionModal from "./CollectionModal/CollectionModal";
 
