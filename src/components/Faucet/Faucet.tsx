@@ -13,7 +13,7 @@ function Faucet() {
   const { chainId } = useEthers();
   const networkName = chainId === 5 ? "goerli" : "localhost";
 
-  const nelAddress = ContractInfo[networkName]["nelthereum"];
+  const nelAddress = ContractInfo[networkName]["Nelthereum"];
 
   return (
     <div>

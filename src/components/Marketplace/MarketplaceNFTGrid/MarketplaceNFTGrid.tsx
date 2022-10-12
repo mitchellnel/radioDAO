@@ -14,7 +14,7 @@ function MarketplaceNFTGrid() {
   const networkName = chainId === 5 ? "goerli" : "localhost";
 
   const nftABI = RadioDAONFTABI["abi"];
-  const nftAddress = ContractAddresses[networkName]["radiodaonft"];
+  const nftAddress = ContractAddresses[networkName]["RadioDAONFT"];
 
   const forSaleNFTs = useGetAllNFTsForSale(nftABI, nftAddress);
 

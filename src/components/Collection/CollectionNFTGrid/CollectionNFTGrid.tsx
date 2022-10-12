@@ -14,7 +14,7 @@ function CollectionNFTGrid() {
   const networkName = chainId === 5 ? "goerli" : "localhost";
 
   const nftABI = RadioDAONFTABI["abi"];
-  const nftAddress = ContractAddresses[networkName]["radiodaonft"];
+  const nftAddress = ContractAddresses[networkName]["RadioDAONFT"];
 
   const userOwnedNFTs = useGetMyNFTs(nftABI, nftAddress);
 

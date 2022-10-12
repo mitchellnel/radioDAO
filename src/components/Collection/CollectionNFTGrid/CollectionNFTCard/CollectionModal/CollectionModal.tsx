@@ -66,7 +66,7 @@ function CollectionModal({
 
   const nelABI = NelthereumABI["abi"];
   const nelInterface = new utils.Interface(nelABI);
-  const nelAddress = ContractAddresses[networkName]["nelthereum"];
+  const nelAddress = ContractAddresses[networkName]["Nelthereum"];
   const nelContract = new Contract(nelAddress, nelInterface);
 
   // get function to make sell transaction
