@@ -2,15 +2,18 @@ import { useCall } from "@usedapp/core";
 import { BigNumber, Contract, utils } from "ethers";
 
 function useGetMarketplaceFee(
-  nftABI: any,
-  nftAddress: string
+  marketplaceABI: any,
+  marketplaceAddress: string
 ): BigNumber | undefined {
-  const nftInterface = new utils.Interface(nftABI);
-  const nftContract = new Contract(nftAddress, nftInterface);
+  const marketplaceInterface = new utils.Interface(marketplaceABI);
+  const marketplaceContract = new Contract(
+    marketplaceAddress,
+    marketplaceInterface
+  );
 
   const { value, error } =
     useCall({
-      contract: nftContract,
+      contract: marketplaceContract,
       method: "getMarketplaceFee",
       args: [],
     }) ?? {};

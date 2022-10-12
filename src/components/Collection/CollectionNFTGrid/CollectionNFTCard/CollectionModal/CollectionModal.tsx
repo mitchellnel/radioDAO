@@ -36,6 +36,7 @@ interface CollectionModalProps {
   isVisible: boolean;
   onClose: () => void;
   nftContract: Contract;
+  marketplaceContract: Contract;
   tokenID: number;
   songTitle: string | undefined;
   songArtist: string | undefined;
@@ -48,6 +49,7 @@ function CollectionModal({
   isVisible,
   onClose,
   nftContract,
+  marketplaceContract,
   tokenID,
   songTitle,
   songArtist,
@@ -70,8 +72,12 @@ function CollectionModal({
   const nelContract = new Contract(nelAddress, nelInterface);
 
   // get function to make sell transaction
-  const { txnState: approveAndSellNFTState, approveAndSellNFT } =
-    useApproveAndSellNFT(nelContract, nftContract, marketplaceFee);
+  const { approveAndSellNFTState, approveAndSellNFT } = useApproveAndSellNFT(
+    nelContract,
+    nftContract,
+    marketplaceContract,
+    marketplaceFee
+  );
 
   // handler for when the modal button is pressed
   const handleModalButtonClick = async (priceToSell: string) => {
@@ -106,9 +112,6 @@ function CollectionModal({
   useEffect(() => {
     if (Number(sellPrice)) {
       const sellPrice_Number: Number = Number(sellPrice);
-
-      console.log("sp", sellPrice);
-      console.log("sp_N", sellPrice_Number);
 
       if (sellPrice_Number <= 0) {
         setSellPriceFieldError(true);
