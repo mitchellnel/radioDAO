@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
 
-import { Modal, Box, Typography, IconButton, Avatar } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  IconButton,
+  Avatar,
+  Link,
+} from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
 import { SuccessNotification } from "../../../types";
+
+const ETHERSCAN_TXN_URL = "https://goerli.etherscan.io/tx/";
 
 const modalBoxStyle = {
   position: "absolute" as "absolute",
@@ -94,7 +103,10 @@ function NotificationModal({
               fontFamily="Outfit"
               fontWeight="600"
             >
-              Your transaction hash is: {txnHash}
+              Your transaction hash is:{" "}
+              <Link href={ETHERSCAN_TXN_URL + txnHash} color="inherit">
+                {txnHash}
+              </Link>
             </Typography>
           </div>
           <IconButton
