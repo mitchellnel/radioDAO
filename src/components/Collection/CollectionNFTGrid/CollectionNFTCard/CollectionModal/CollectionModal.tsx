@@ -8,15 +8,18 @@ import {
   Typography,
   CircularProgress,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
+import { useGetVotes } from "../../../../../hooks/radioDAONFT";
 import { useApproveAndSellNFT } from "../../../../../hooks/radioDAOMarketplace";
 
 import ModalCloseButton from "../../../../shared/ModalFeatures/ModalCloseButton";
 import ModalPlayer from "../../../../shared/ModalFeatures/ModalPlayer/ModalPlayer";
 
 import NelthereumABI from "../../../../../constants/NelthereumABI.json";
+import RadioDAONFTABI from "../../../../../constants/RadioDAONFTABI.json";
 import ContractAddresses from "../../../../../constants/ContractAddresses.json";
 
 const modalBoxStyle = {
@@ -57,13 +60,13 @@ function CollectionModal({
   audioURI,
   marketplaceFee,
 }: CollectionModalProps) {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [sellBtnLoading, setSellBtnLoading] = useState<boolean>(false);
   const [sellPrice, setSellPrice] = useState<string>("");
   const [sellPriceFieldError, setSellPriceFieldError] =
     useState<boolean>(false);
 
   // get NEL contract
-  const { chainId } = useEthers();
+  const { account, chainId } = useEthers();
   const networkName = chainId === 5 ? "goerli" : "localhost";
 
   const nelABI = NelthereumABI["abi"];
@@ -79,8 +82,8 @@ function CollectionModal({
     marketplaceFee
   );
 
-  // handler for when the modal button is pressed
-  const handleModalButtonClick = async (priceToSell: string) => {
+  // handler for when the sell button is pressed
+  const handleSellButtonClick = async (priceToSell: string) => {
     if (priceToSell === "") {
       setSellPriceFieldError(true);
       return;
@@ -95,9 +98,9 @@ function CollectionModal({
       approveAndSellNFTState.status === "PendingSignature" ||
       approveAndSellNFTState.status === "Mining"
     ) {
-      setLoading(true);
+      setSellBtnLoading(true);
     } else {
-      setLoading(false);
+      setSellBtnLoading(false);
     }
   }, [approveAndSellNFTState]);
 
@@ -124,6 +127,35 @@ function CollectionModal({
       setSellPriceFieldError(false);
     }
   }, [sellPrice]);
+
+  // DAO stuff
+  const [registeredToVote, setRegisteredToVote] = useState<boolean>(false);
+  const [proposeBtnLoading, setProposeBtnLoading] = useState<boolean>(false);
+
+  // get RadioDAONFT ABI
+  const nftABI = RadioDAONFTABI["abi"];
+
+  const userVotes = useGetVotes(nftABI, nftContract.address, account as string);
+
+  useEffect(() => {
+    if (userVotes !== undefined) {
+      if (Number(userVotes) > 0) {
+        setRegisteredToVote(true);
+      } else {
+        setRegisteredToVote(false);
+      }
+    } else {
+      setRegisteredToVote(false);
+    }
+  }, [userVotes]);
+
+  // get function to make propose transaction
+  // TODO: implement this hook
+
+  // handler for when the propose button is pressed
+  const handleProposeButtonClicked = async () => {
+    console.log("Propose clicked!");
+  };
 
   return (
     <Modal
@@ -176,7 +208,34 @@ function CollectionModal({
             />
           </div>
 
-          <div className="basis-1/2 pt-20 px-10">
+          <div className="flex flex-col basis-1/2 pt-20 px-10">
+            <Tooltip
+              title={
+                registeredToVote
+                  ? ""
+                  : "You need to register to vote! Head to the Voting page."
+              }
+            >
+              <div className="flex mb-20 justify-center">
+                <LoadingButton
+                  disabled={!registeredToVote}
+                  loading={proposeBtnLoading}
+                  loadingIndicator={
+                    <CircularProgress color="secondary" size={24} />
+                  }
+                  variant="contained"
+                  color="secondary"
+                  sx={{
+                    fontFamily: "Outfit",
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                  }}
+                  onClick={handleProposeButtonClicked}
+                >
+                  Propose Song
+                </LoadingButton>
+              </div>
+            </Tooltip>
             <ModalPlayer audioURI={audioURI as string} />
           </div>
         </div>
@@ -197,12 +256,12 @@ function CollectionModal({
             }
           />
           <LoadingButton
-            loading={loading}
+            loading={sellBtnLoading}
             loadingIndicator={<CircularProgress color="secondary" size={24} />}
             variant="contained"
             color="secondary"
             sx={{ fontFamily: "Outfit", fontSize: "1rem", fontWeight: "600" }}
-            onClick={() => handleModalButtonClick(sellPrice)}
+            onClick={() => handleSellButtonClick(sellPrice)}
           >
             Sell NFT
           </LoadingButton>
