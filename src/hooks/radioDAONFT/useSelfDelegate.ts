@@ -1,24 +1,20 @@
-import { useCall, useEthers } from "@usedapp/core";
-import { Contract, utils, constants } from "ethers";
+import { useContractFunction, useEthers } from "@usedapp/core";
+import { Contract } from "ethers";
 
-function useSelfDelegate(nftABI: any, nftAddress: string): string | undefined {
+function useSelfDelegate(nftContract: Contract) {
+  // we use this hook as a wrapper for a useContractCall to delegate
   const { account } = useEthers();
-  const nftInterface = new utils.Interface(nftABI);
-  const nftContract = new Contract(nftAddress, nftInterface);
 
-  const { value, error } =
-    useCall({
-      contract: nftContract,
-      method: "delegate",
-      args: [account ? account : constants.AddressZero],
-    }) ?? {};
+  const { state: selfDelegateState, send: selfDelegateSend } =
+    useContractFunction(nftContract, "delegate", {
+      transactionName: "Self Delegate",
+    });
 
-  if (error) {
-    return undefined;
-  }
+  const selfDelegate = () => {
+    selfDelegateSend(account);
+  };
 
-  if (value !== undefined) return value[0];
-  else return value;
+  return { selfDelegateState, selfDelegate };
 }
 
 export { useSelfDelegate };
