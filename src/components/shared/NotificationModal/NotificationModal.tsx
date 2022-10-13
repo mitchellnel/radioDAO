@@ -59,6 +59,8 @@ function NotificationModal({
       setDisplayMsg(
         "You have successfully delisted your RadioDAO NFT from the marketplace!"
       );
+    } else if (txnName === "Self Delegate") {
+      setDisplayMsg("You have successfully registered to vote!");
     }
   }, [txnName]);
 
