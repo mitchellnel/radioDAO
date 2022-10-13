@@ -1,11 +1,8 @@
-import { useCall } from "@usedapp/core";
-import { BigNumber, Contract, utils } from "ethers";
+import { useCall, useEthers } from "@usedapp/core";
+import { BigNumber, constants, Contract, utils } from "ethers";
 
-function useGetVotes(
-  nftABI: any,
-  nftAddress: string,
-  userAddress: string
-): BigNumber | undefined {
+function useGetVotes(nftABI: any, nftAddress: string): BigNumber | undefined {
+  const { account } = useEthers();
   const nftInterface = new utils.Interface(nftABI);
   const nftContract = new Contract(nftAddress, nftInterface);
 
@@ -13,7 +10,7 @@ function useGetVotes(
     useCall({
       contract: nftContract,
       method: "getVotes",
-      args: [userAddress],
+      args: [account ? account : constants.AddressZero],
     }) ?? {};
 
   if (error) {

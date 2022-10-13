@@ -135,7 +135,7 @@ function CollectionModal({
   // get RadioDAONFT ABI
   const nftABI = RadioDAONFTABI["abi"];
 
-  const userVotes = useGetVotes(nftABI, nftContract.address, account as string);
+  const userVotes = useGetVotes(nftABI, nftContract.address);
 
   useEffect(() => {
     if (userVotes !== undefined) {
