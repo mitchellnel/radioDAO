@@ -15,8 +15,8 @@ import { LoadingButton } from "@mui/lab";
 import { useGetVotes } from "../../../../../hooks/radioDAONFT";
 import { useApproveAndSellNFT } from "../../../../../hooks/radioDAOMarketplace";
 
-import ModalCloseButton from "../../../../shared/ModalFeatures/ModalCloseButton";
-import ModalPlayer from "../../../../shared/ModalFeatures/ModalPlayer/ModalPlayer";
+import ModalCloseButton from "../../../../shared/NFTModalFeatures/ModalCloseButton";
+import NFTModalPlayer from "../../../../shared/NFTModalFeatures/NFTModalPlayer/NFTModalPlayer";
 
 import NelthereumABI from "../../../../../constants/NelthereumABI.json";
 import RadioDAONFTABI from "../../../../../constants/RadioDAONFTABI.json";
@@ -236,7 +236,7 @@ function CollectionModal({
                 </LoadingButton>
               </div>
             </Tooltip>
-            <ModalPlayer audioURI={audioURI as string} />
+            <NFTModalPlayer audioURI={audioURI as string} />
           </div>
         </div>
         <div className="flex justify-center mt-16 mb-8 gap-8">

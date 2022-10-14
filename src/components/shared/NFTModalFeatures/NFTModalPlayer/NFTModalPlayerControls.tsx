@@ -4,7 +4,7 @@ import PlayerSlider from "../../../Main/PlayerControls/PlayerSlider/PlayerSlider
 import PlayButton from "../../../Main/PlayerControls/Buttons/PlayButton";
 import PauseButton from "../../../Main/PlayerControls/Buttons/PauseButton";
 
-interface ModalPlayerControlsProps {
+interface NFTModalPlayerControlsProps {
   currentlyPlaying: boolean;
   songDuration: number;
   sliderPosition: number;
@@ -12,13 +12,13 @@ interface ModalPlayerControlsProps {
   handleTimeUpdate: (commitChange: boolean, newTime: number) => void;
 }
 
-function ModalPlayerControls({
+function NFTModalPlayerControls({
   currentlyPlaying,
   songDuration,
   sliderPosition,
   handlePlayPauseClick,
   handleTimeUpdate,
-}: ModalPlayerControlsProps) {
+}: NFTModalPlayerControlsProps) {
   const [isPlaying, setPlayingFlag] = useState<boolean>(currentlyPlaying);
 
   const clickPlayPause = () => {
@@ -49,4 +49,4 @@ function ModalPlayerControls({
   );
 }
 
-export default ModalPlayerControls;
+export default NFTModalPlayerControls;

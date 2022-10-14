@@ -10,8 +10,8 @@ import {
   useDelistNFT,
 } from "../../../../../hooks/radioDAOMarketplace";
 
-import ModalCloseButton from "../../../../shared/ModalFeatures/ModalCloseButton";
-import ModalPlayer from "../../../../shared/ModalFeatures/ModalPlayer/ModalPlayer";
+import ModalCloseButton from "../../../../shared/NFTModalFeatures/ModalCloseButton";
+import NFTModalPlayer from "../../../../shared/NFTModalFeatures/NFTModalPlayer/NFTModalPlayer";
 
 import NelthereumABI from "../../../../../constants/NelthereumABI.json";
 import ContractAddresses from "../../../../../constants/ContractAddresses.json";
@@ -158,7 +158,7 @@ function ListingModal({
           </div>
 
           <div className="basis-1/2 pt-20 px-10">
-            <ModalPlayer audioURI={audioURI as string} />
+            <NFTModalPlayer audioURI={audioURI as string} />
           </div>
         </div>
         <div className="flex justify-center mt-16 mb-8 gap-8">
