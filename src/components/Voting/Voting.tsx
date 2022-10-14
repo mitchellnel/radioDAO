@@ -5,6 +5,7 @@ import { Contract, utils } from "ethers";
 
 import { useGetDelegate, useGetVotes } from "../../hooks/radioDAONFT";
 
+import VotingBox from "./VotingBox/VotingBox";
 import NotRegisteredModal from "./NotRegisteredModal";
 import NotificationModal from "../shared/NotificationModal/NotificationModal";
 
@@ -93,25 +94,16 @@ function Voting() {
       <div className="container mx-auto">
         <h1
           style={{
-            fontSize: "3rem",
-            fontWeight: "600",
-            marginTop: "32px",
-            textAlign: "left",
-          }}
-        >
-          Voting
-        </h1>
-
-        <h1
-          style={{
             fontSize: "2rem",
-            fontWeight: "300",
+            fontWeight: "600",
             marginTop: "20px",
             textAlign: "left",
           }}
         >
           Your Voting Power is: {votingPower}
         </h1>
+
+        <VotingBox />
       </div>
     </>
   );
