@@ -1,39 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { Box, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { useEthers, useLogs } from "@usedapp/core";
-import { BigNumber, Contract, utils } from "ethers";
+import { useEthers } from "@usedapp/core";
+import { Contract, utils } from "ethers";
 
-import {
-  useProposalState,
-  useGetAllProposalInformation,
-} from "../../../hooks/radioDAO";
+import { useGetAllProposalInformation } from "../../../hooks/radioDAO";
 
 import ContractAddresses from "../../../constants/ContractAddresses.json";
 import RadioDAOABI from "../../../constants/RadioDAOABI.json";
+import { ProposalInformation } from "../../../types/types";
 
 function VotingTabs() {
   const { chainId } = useEthers();
   const networkName = chainId === 5 ? "goerli" : "localhost";
 
-  // get RadiDAO contract
+  // get RadioDAO contract
   const daoABI = RadioDAOABI["abi"];
   const daoInterface = new utils.Interface(daoABI);
   const daoAddress = ContractAddresses[networkName]["RadioDAO"];
   const daoContract = new Contract(daoAddress, daoInterface);
 
-  const [tabValue, setTabValue] = useState<string>("1");
+  const [tabValue, setTabValue] = useState<string>("no-active-proposals");
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     setTabValue(newValue);
   };
 
-  const proposals = useGetAllProposalInformation(daoABI, daoAddress);
-
-  useEffect(() => {
-    console.log(proposals);
-  }, [proposals]);
+  // get the active proposals
+  const proposals: ProposalInformation[] = useGetAllProposalInformation(
+    daoABI,
+    daoAddress
+  );
 
   return (
     <div className="flex w-full justify-center content-center">
@@ -41,12 +39,29 @@ function VotingTabs() {
         <Box sx={{ borderBottom: 1, borderColor: "divider", width: "90%" }}>
           <TabList
             onChange={handleTabChange}
-            aria-label="lab API tabs example"
+            aria-label="proposal-tab-list"
             centered
           >
-            <Tab label="Campfire" value="1" />
-            <Tab label="Sandcastle" value="2" />
-            <Tab label="Summer Nights" value="3" />
+            {proposals.length !== 0 &&
+            proposals.filter((proposal) => proposal.state === 1).length !==
+              0 ? (
+              proposals?.map((proposal) => {
+                if (proposal.state === 1) {
+                  console.log("fds");
+                  const value = String(proposal.id);
+
+                  return (
+                    <Tab
+                      key={value}
+                      label={truncateString(value, 15)}
+                      value={value}
+                    />
+                  );
+                }
+              })
+            ) : (
+              <Tab label="No active proposals" value="no-active-proposals" />
+            )}
           </TabList>
         </Box>
       </TabContext>
@@ -55,3 +70,20 @@ function VotingTabs() {
 }
 
 export default VotingTabs;
+
+function truncateString(str: string, strLen: number): string {
+  if (str.length <= strLen) return str;
+
+  const separator = "...";
+
+  const nCharsToShow = strLen - separator.length;
+
+  const frontChars = Math.ceil(nCharsToShow / 2);
+  const backChars = Math.floor(nCharsToShow / 2);
+
+  return (
+    str.substring(0, frontChars) +
+    separator +
+    str.substring(str.length - backChars)
+  );
+}
