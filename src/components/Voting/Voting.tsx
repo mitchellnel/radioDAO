@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useEthers, useNotifications } from "@usedapp/core";
 import { Contract, utils } from "ethers";
 
-import { useGetDelegate } from "../../hooks/radioDAONFT";
+import { useGetDelegate, useGetVotes } from "../../hooks/radioDAONFT";
 
 import NotRegisteredModal from "./NotRegisteredModal";
 import NotificationModal from "../shared/NotificationModal/NotificationModal";
@@ -14,6 +14,7 @@ import { SuccessNotification } from "../../types";
 
 function Voting() {
   const [registeredToVote, setRegisteredToVote] = useState<boolean>(false);
+  const [votingPower, setVotingPower] = useState<number>(0);
 
   const { account, chainId } = useEthers();
   const networkName = chainId === 5 ? "goerli" : "localhost";
@@ -27,7 +28,7 @@ function Voting() {
   // get the delegate of the user
   const delegate = useGetDelegate(nftABI, nftAddress);
 
-  // set registeredToVote as true if the user has
+  // set registeredToVote as true if the user has self-delegated
   useEffect(() => {
     if (account !== undefined && delegate !== undefined) {
       if (delegate === account) {
@@ -62,6 +63,18 @@ function Voting() {
     });
   }, [notifications]);
 
+  // get the number of votes that the user has
+  const numVotes = useGetVotes(nftABI, nftAddress);
+
+  // set state based on numVotes
+  useEffect(() => {
+    if (numVotes !== undefined) {
+      setVotingPower(Number(numVotes));
+    } else {
+      setVotingPower(0);
+    }
+  }, [numVotes]);
+
   return (
     <>
       {showNotification ? (
@@ -73,12 +86,32 @@ function Voting() {
       ) : (
         <></>
       )}
-      <div>
-        <h1>Voting</h1>
-        <NotRegisteredModal
-          isVisible={!registeredToVote}
-          nftContract={nftContract}
-        />
+      <NotRegisteredModal
+        isVisible={!registeredToVote}
+        nftContract={nftContract}
+      />
+      <div className="container mx-auto">
+        <h1
+          style={{
+            fontSize: "3rem",
+            fontWeight: "600",
+            marginTop: "32px",
+            textAlign: "left",
+          }}
+        >
+          Voting
+        </h1>
+
+        <h1
+          style={{
+            fontSize: "2rem",
+            fontWeight: "300",
+            marginTop: "20px",
+            textAlign: "left",
+          }}
+        >
+          Your Voting Power is: {votingPower}
+        </h1>
       </div>
     </>
   );
