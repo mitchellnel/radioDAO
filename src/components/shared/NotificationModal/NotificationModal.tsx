@@ -1,15 +1,9 @@
 import React, { useEffect, useState } from "react";
 
-import {
-  Modal,
-  Box,
-  Typography,
-  IconButton,
-  Avatar,
-  Link,
-} from "@mui/material";
+import { Modal, Box, Typography, Link } from "@mui/material";
 
-import CloseIcon from "@mui/icons-material/Close";
+import ModalCloseButton from "../NFTModalFeatures/ModalCloseButton";
+
 import { SuccessNotification } from "../../../types";
 
 const ETHERSCAN_TXN_URL = "https://goerli.etherscan.io/tx/";
@@ -111,24 +105,9 @@ function NotificationModal({
               </Link>
             </Typography>
           </div>
-          <IconButton
-            className="self-start"
-            aria-label="close-modal"
-            color="secondary"
-            onClick={onClose}
-            sx={{ "&:hover": { backgroundColor: "rgb(232, 189, 48, 0.4)" } }}
-          >
-            <Avatar
-              sx={{
-                bgcolor: "secondary.main",
-                color: "primary.main",
-                height: 40,
-                width: 40,
-              }}
-            >
-              <CloseIcon sx={{ fontSize: "1.5rem" }} />
-            </Avatar>
-          </IconButton>
+          <div className="self-start">
+            <ModalCloseButton onClick={onClose} />
+          </div>
         </div>
       </Box>
     </Modal>
