@@ -1,15 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 
-import { Box, Tab, Typography } from "@mui/material";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { Box, Typography } from "@mui/material";
+import VotingTabs from "./VotingTabs";
 
 function VotingBox() {
-  const [tabValue, setTabValue] = useState<string>("1");
-
-  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
-    setTabValue(newValue);
-  };
-
   return (
     <div>
       <Box
@@ -40,19 +34,7 @@ function VotingBox() {
           Song Proposals
         </Typography>
 
-        <TabContext value={tabValue}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider", width: "90%" }}>
-            <TabList
-              onChange={handleTabChange}
-              aria-label="lab API tabs example"
-              centered
-            >
-              <Tab label="Campfire" value="1" />
-              <Tab label="Sandcastle" value="2" />
-              <Tab label="Summer Nights" value="3" />
-            </TabList>
-          </Box>
-        </TabContext>
+        <VotingTabs />
       </Box>
     </div>
   );
