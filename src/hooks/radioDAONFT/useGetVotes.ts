@@ -17,7 +17,12 @@ function useGetVotes(nftABI: any, nftAddress: string): BigNumber | undefined {
     return undefined;
   }
 
-  return value;
+  if (error) {
+    return undefined;
+  }
+
+  if (value !== undefined) return value[0];
+  else return value;
 }
 
 export { useGetVotes };
