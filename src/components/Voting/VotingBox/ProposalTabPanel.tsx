@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
 
+import { useEthers } from "@usedapp/core";
+import { Button, Typography } from "@mui/material";
 import { TabPanel } from "@mui/lab";
+
+import { useProposalVotes } from "../../../hooks/radioDAO";
+
+import NFTModalArt from "../../shared/NFTModalFeatures/NFTModalArt";
 
 import { ProposalInformation } from "../../../types/types";
 import { RadioDAONFTMetadata } from "../../../../scripts/types";
-import NFTModalArt from "../../shared/NFTModalFeatures/NFTModalArt";
-import { Typography } from "@mui/material";
-import NFTModalTitle from "../../shared/NFTModalFeatures/NFTModalTitle";
+
+import ContractAddresses from "../../../constants/ContractAddresses.json";
+import RadioDAOABI from "../../../constants/RadioDAOABI.json";
+import VoteWayText from "./ProposalTabPanelFeatures/VoteWayText";
 
 interface ProposalTabPanelProps {
   proposal: ProposalInformation;
@@ -16,7 +23,6 @@ function ProposalTabPanel({ proposal }: ProposalTabPanelProps) {
   const [songTitle, setSongTitle] = useState<string>("");
   const [songArtist, setSongArtist] = useState<string>("");
   const [imageURI, setImageURI] = useState<string>("");
-  const [audioURI, setAudioURI] = useState<string>("");
 
   const tokenURI = proposal.description.split("$")[1];
   const panelValue = String(proposal.id);
@@ -37,16 +43,22 @@ function ProposalTabPanel({ proposal }: ProposalTabPanelProps) {
         setImageURI(
           tokenURIResponse.image.replace("ipfs://", "https://ipfs.io/ipfs/")
         );
-        setAudioURI(
-          tokenURIResponse.audio.replace("ipfs://", "https://ipfs.io/ipfs/")
-        );
       }
     };
     updateUI();
   }, [tokenURI]);
 
+  // get RadioDAO contract
+  const { chainId } = useEthers();
+  const networkName = chainId === 5 ? "goerli" : "localhost";
+
+  const daoABI = RadioDAOABI["abi"];
+  const daoAddress = ContractAddresses[networkName]["RadioDAO"];
+
+  const proposalVotes = useProposalVotes(daoABI, daoAddress, proposal.id);
+
   return (
-    <div style={{ marginTop: "-20px" }}>
+    <div style={{ marginTop: "-10px" }}>
       <TabPanel value={panelValue}>
         <div className="flex flex-col gap-4">
           <Typography
@@ -64,14 +76,55 @@ function ProposalTabPanel({ proposal }: ProposalTabPanelProps) {
             <div className="basis-1/2">
               <NFTModalArt imageURI={imageURI} />
             </div>
-            <div className="flex flex-col basis-1/2 mt-10 gap-y-40">
-              <div className="flex flex-row justify-center">
-                <p>Votes For</p>
-                <p>Votes Against</p>
+            <div className="flex flex-col basis-1/2 mt-10 gap-y-20">
+              <div className="flex flex-col justify-center">
+                <VoteWayText
+                  voteWay="FOR"
+                  votes={
+                    proposalVotes ? proposalVotes["forVotes"].toString() : "0"
+                  }
+                />
+
+                <VoteWayText
+                  voteWay="AGAINST"
+                  votes={
+                    proposalVotes
+                      ? proposalVotes["againstVotes"].toString()
+                      : "0"
+                  }
+                />
+
+                <VoteWayText
+                  voteWay="ABSTAINING"
+                  votes={
+                    proposalVotes
+                      ? proposalVotes["abstainVotes"].toString()
+                      : "0"
+                  }
+                />
               </div>
-              <div className="flex flex-row justify-center">
-                <p>Vote for BTN</p>
-                <p>Vote against BTN</p>
+              <div className="flex flex-row justify-center gap-4">
+                <Button
+                  variant="contained"
+                  color="voteFor"
+                  sx={{ fontSize: "1.25rem" }}
+                >
+                  Vote For
+                </Button>
+                <Button
+                  variant="contained"
+                  color="voteAgainst"
+                  sx={{ fontSize: "1.25rem" }}
+                >
+                  Vote Against
+                </Button>
+                <Button
+                  variant="contained"
+                  color="voteAbstain"
+                  sx={{ fontSize: "1.25rem" }}
+                >
+                  Abstain
+                </Button>
               </div>
             </div>
           </div>
