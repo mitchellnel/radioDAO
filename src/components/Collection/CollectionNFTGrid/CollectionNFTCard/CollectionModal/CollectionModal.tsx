@@ -31,6 +31,7 @@ interface CollectionModalProps {
   nftContract: Contract;
   marketplaceContract: Contract;
   tokenID: number;
+  tokenURI: string | undefined;
   songTitle: string | undefined;
   songArtist: string | undefined;
   imageURI: string | undefined;
@@ -44,6 +45,7 @@ function CollectionModal({
   nftContract,
   marketplaceContract,
   tokenID,
+  tokenURI,
   songTitle,
   songArtist,
   imageURI,
@@ -69,7 +71,7 @@ function CollectionModal({
           <NFTModalArt imageURI={imageURI} />
 
           <div className="flex flex-col basis-1/2 pt-20 px-10">
-            <ProposeVoteButton nftContract={nftContract} />
+            <ProposeVoteButton nftContract={nftContract} tokenURI={tokenURI} />
             <NFTModalPlayer audioURI={audioURI as string} />
           </div>
         </div>
