@@ -40,8 +40,8 @@ function MarketplaceNFTCard({
 
   // create RadioDAONFT contract object
   const rdioNFTABI = RadioDAONFTABI["abi"];
-  const rdioNFTInterface = new utils.Interface(rdioNFTABI);
-  const rdioNFTContract = new Contract(rdioNFTAddress, rdioNFTInterface);
+  // const rdioNFTInterface = new utils.Interface(rdioNFTABI);
+  // const rdioNFTContract = new Contract(rdioNFTAddress, rdioNFTInterface);
 
   // create RadioDAOMarketplace contract object
   const marketplaceABI = RadioDAOMarketplaceABI["abi"];
@@ -97,7 +97,6 @@ function MarketplaceNFTCard({
         <ListingModal
           isVisible={showModal}
           onClose={hideModal}
-          nftContract={rdioNFTContract}
           marketplaceContract={marketplaceContract}
           tokenID={tokenID}
           seller={seller}

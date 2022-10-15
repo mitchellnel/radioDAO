@@ -25,7 +25,6 @@ const modalBoxStyle = {
 interface ListingModalProps {
   isVisible: boolean;
   onClose: () => void;
-  nftContract: Contract;
   marketplaceContract: Contract;
   tokenID: number;
   seller: string | undefined;
@@ -39,7 +38,6 @@ interface ListingModalProps {
 function ListingModal({
   isVisible,
   onClose,
-  nftContract,
   marketplaceContract,
   tokenID,
   seller,
