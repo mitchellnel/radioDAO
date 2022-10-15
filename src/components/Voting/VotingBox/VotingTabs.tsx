@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Box, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
@@ -10,6 +10,7 @@ import { useGetAllProposalInformation } from "../../../hooks/radioDAO";
 import ContractAddresses from "../../../constants/ContractAddresses.json";
 import RadioDAOABI from "../../../constants/RadioDAOABI.json";
 import { ProposalInformation } from "../../../types/types";
+import ProposalTabPanel from "./ProposalTabPanel";
 
 function VotingTabs() {
   const { chainId } = useEthers();
@@ -34,7 +35,7 @@ function VotingTabs() {
   );
 
   return (
-    <div className="flex w-full justify-center content-center">
+    <div className="flex flex-col w-full justify-center items-center content-center">
       <TabContext value={tabValue}>
         <Box sx={{ borderBottom: 1, borderColor: "divider", width: "90%" }}>
           <TabList
@@ -42,12 +43,12 @@ function VotingTabs() {
             aria-label="proposal-tab-list"
             centered
           >
-            {proposals.length !== 0 &&
-            proposals.filter((proposal) => proposal.state === 1).length !==
+            {proposals.length === 0 ||
+            proposals.filter((proposal) => proposal.state === 3).length !==
               0 ? (
+              // eslint-disable-next-line array-callback-return
               proposals?.map((proposal) => {
-                if (proposal.state === 1) {
-                  console.log("fds");
+                if (proposal.state === 3) {
                   const value = String(proposal.id);
 
                   return (
@@ -64,6 +65,21 @@ function VotingTabs() {
             )}
           </TabList>
         </Box>
+        {proposals.length === 0 ||
+        proposals.filter((proposal) => proposal.state === 3).length !== 0 ? (
+          // eslint-disable-next-line array-callback-return
+          proposals?.map((proposal) => {
+            if (proposal.state === 3) {
+              const value = String(proposal.id);
+
+              return <ProposalTabPanel key={value} proposal={proposal} />;
+            }
+          })
+        ) : (
+          <TabPanel value="no-active-proposals">
+            There are no active proposals.
+          </TabPanel>
+        )}
       </TabContext>
     </div>
   );
