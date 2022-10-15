@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { useEthers } from "@usedapp/core";
-import { Button, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { TabPanel } from "@mui/lab";
 
 import { useProposalVotes } from "../../../hooks/radioDAO";
@@ -14,6 +14,7 @@ import { RadioDAONFTMetadata } from "../../../../scripts/types";
 import ContractAddresses from "../../../constants/ContractAddresses.json";
 import RadioDAOABI from "../../../constants/RadioDAOABI.json";
 import VoteWayText from "./ProposalTabPanelFeatures/VoteWayText";
+import VoteWayButton from "./ProposalTabPanelFeatures/VoteWayButton";
 
 interface ProposalTabPanelProps {
   proposal: ProposalInformation;
@@ -104,27 +105,9 @@ function ProposalTabPanel({ proposal }: ProposalTabPanelProps) {
                 />
               </div>
               <div className="flex flex-row justify-center gap-4">
-                <Button
-                  variant="contained"
-                  color="voteFor"
-                  sx={{ fontSize: "1.25rem" }}
-                >
-                  Vote For
-                </Button>
-                <Button
-                  variant="contained"
-                  color="voteAgainst"
-                  sx={{ fontSize: "1.25rem" }}
-                >
-                  Vote Against
-                </Button>
-                <Button
-                  variant="contained"
-                  color="voteAbstain"
-                  sx={{ fontSize: "1.25rem" }}
-                >
-                  Abstain
-                </Button>
+                <VoteWayButton voteWay="FOR" />
+                <VoteWayButton voteWay="AGAINST" />
+                <VoteWayButton voteWay="ABSTAIN" />
               </div>
             </div>
           </div>
