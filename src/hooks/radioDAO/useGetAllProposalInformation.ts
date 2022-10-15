@@ -17,7 +17,7 @@ function useGetAllProposalInformation(
       args: [],
     },
     {
-      fromBlock: 7753207,
+      fromBlock: 7771346,
       toBlock: "latest",
     }
   );
