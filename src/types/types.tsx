@@ -13,4 +13,10 @@ type ProposalInformation = {
   description: string;
 };
 
-export type { SuccessNotification, ProposalInformation };
+type ProposalVotes = {
+  againstVotes: BigNumber;
+  forVotes: BigNumber;
+  abstainVotes: BigNumber;
+};
+
+export type { SuccessNotification, ProposalInformation, ProposalVotes };
