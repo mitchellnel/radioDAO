@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { Box, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { useEthers } from "@usedapp/core";
-import { Contract, utils } from "ethers";
 
 import { useGetAllProposalInformation } from "../../../hooks/radioDAO";
 
+import ProposalTabPanel from "./ProposalTabPanel";
+
 import ContractAddresses from "../../../constants/ContractAddresses.json";
 import RadioDAOABI from "../../../constants/RadioDAOABI.json";
-import { ProposalInformation } from "../../../types/types";
-import ProposalTabPanel from "./ProposalTabPanel";
+import { ProposalInformation } from "../../../types";
 
 function VotingTabs() {
   const { chainId } = useEthers();
@@ -18,9 +18,7 @@ function VotingTabs() {
 
   // get RadioDAO contract
   const daoABI = RadioDAOABI["abi"];
-  const daoInterface = new utils.Interface(daoABI);
   const daoAddress = ContractAddresses[networkName]["RadioDAO"];
-  const daoContract = new Contract(daoAddress, daoInterface);
 
   const [tabValue, setTabValue] = useState<string>("no-active-proposals");
 

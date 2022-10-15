@@ -1,6 +1,7 @@
 import { useCall } from "@usedapp/core";
 import { BigNumber, Contract, utils } from "ethers";
-import { ProposalVotes } from "../../types/types";
+
+import { ProposalVotes } from "../../types";
 
 function useProposalVotes(
   daoABI: any,
