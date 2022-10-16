@@ -68,8 +68,10 @@ function ProposalTabPanel({ proposal }: ProposalTabPanelProps) {
   useEffect(() => {
     notifications.every((notification) => {
       if (
-        notification.type === "transactionSucceed" &&
-        notification.transactionName === "Cast a vote on a proposal"
+        (notification.type === "transactionSucceed" &&
+          notification.transactionName === "Cast a vote on a proposal") ||
+        (notification.type === "transactionSucceed" &&
+          notification.transactionName === "Queue proposal to RadioDAO")
       ) {
         setShowNotificationFlag(true);
         setSuccessNotification(notification);
