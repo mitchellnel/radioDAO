@@ -9,6 +9,7 @@ import { useProposalVotes } from "../../../hooks/radioDAO";
 import NFTModalArt from "../../shared/NFTModalFeatures/NFTModalArt";
 import NotificationModal from "../../shared/NotificationModal/NotificationModal";
 import VoteForm from "./ProposalTabPanelFeatures/VoteFeatures/VoteForm";
+import QueueExecuteForm from "./ProposalTabPanelFeatures/QueueExecuteFeatures/QueueExecuteForm";
 
 import ContractAddresses from "../../../constants/ContractAddresses.json";
 import RadioDAOABI from "../../../constants/RadioDAOABI.json";
@@ -109,7 +110,11 @@ function ProposalTabPanel({ proposal }: ProposalTabPanelProps) {
                 <NFTModalArt imageURI={imageURI} />
               </div>
               <div className="flex flex-col basis-1/2 mt-10 gap-y-20">
-                <VoteForm proposal={proposal} proposalVotes={proposalVotes} />
+                {proposal.state === 4 ? (
+                  <QueueExecuteForm proposal={proposal} />
+                ) : (
+                  <VoteForm proposal={proposal} proposalVotes={proposalVotes} />
+                )}
               </div>
             </div>
           </div>
