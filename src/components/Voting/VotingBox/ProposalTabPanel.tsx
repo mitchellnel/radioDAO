@@ -91,7 +91,7 @@ function ProposalTabPanel({ proposal }: ProposalTabPanelProps) {
       ) : (
         <></>
       )}
-      <div style={{ marginTop: "-10px" }}>
+      <div>
         <TabPanel value={panelValue}>
           <div className="flex flex-col gap-4">
             <Typography

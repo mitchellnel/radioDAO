@@ -13,7 +13,7 @@ function VotingBox() {
           borderRadius: "25px",
           display: "flex",
           flexDirection: "column",
-          height: "700px",
+          height: "750px",
           marginTop: "16px",
           opacity: "90%",
           alignItems: "center",
