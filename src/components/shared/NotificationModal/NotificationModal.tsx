@@ -55,6 +55,10 @@ function NotificationModal({
       );
     } else if (txnName === "Self Delegate") {
       setDisplayMsg("You have successfully registered to vote!");
+    } else if (txnName === "Propose to Queue Song") {
+      setDisplayMsg("You have succesfully proposed a song to be queued!");
+    } else if (txnName === "Cast a vote on a proposal") {
+      setDisplayMsg("You have successfully cast your vote on a proposal!");
     }
   }, [txnName]);
 
@@ -100,7 +104,11 @@ function NotificationModal({
               fontWeight="600"
             >
               Your transaction hash is:{" "}
-              <Link href={ETHERSCAN_TXN_URL + txnHash} color="inherit">
+              <Link
+                href={ETHERSCAN_TXN_URL + txnHash}
+                color="inherit"
+                sx={{ "&:hover": { color: "#af9f6a" } }}
+              >
                 {txnHash}
               </Link>
             </Typography>

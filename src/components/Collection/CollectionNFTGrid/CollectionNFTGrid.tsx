@@ -29,8 +29,10 @@ function CollectionNFTGrid() {
   useEffect(() => {
     notifications.every((notification) => {
       if (
-        notification.type === "transactionSucceed" &&
-        notification.transactionName === "Sell NFT"
+        (notification.type === "transactionSucceed" &&
+          notification.transactionName === "Sell NFT") ||
+        (notification.type === "transactionSucceed" &&
+          notification.transactionName === "Propose to Queue Song")
       ) {
         setShowNotificationFlag(true);
         setSuccessNotification(notification);
