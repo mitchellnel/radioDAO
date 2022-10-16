@@ -1,9 +1,4 @@
-import { useEffect, useState } from "react";
-import {
-  TransactionStatus,
-  useContractFunction,
-  useEthers,
-} from "@usedapp/core";
+import { useContractFunction, useEthers } from "@usedapp/core";
 import { Contract, utils } from "ethers";
 
 import ContractAddresses from "../../constants/ContractAddresses.json";
@@ -11,7 +6,7 @@ import RadioDAOABI from "../../constants/RadioDAOABI.json";
 import RadioABI from "../../constants/RadioABI.json";
 import { ProposalInformation } from "../../types";
 
-function useQueueAndExecuteProposal(
+function useExecuteProposal(
   proposal: ProposalInformation,
   voteTokenURI: string | undefined
 ) {
@@ -44,14 +39,14 @@ function useQueueAndExecuteProposal(
   );
 
   // make the queue transaction
-  const { state: queueProposalState, send: queueProposalSend } =
-    useContractFunction(daoContract, "queue", {
-      transactionName: "Queue proposal to RadioDAO",
+  const { state: executeProposalState, send: executeProposalSend } =
+    useContractFunction(daoContract, "execute", {
+      transactionName: "Execute proposal on Radio",
     });
 
-  const queueAndExecuteProposal = () => {
+  const executeProposal = () => {
     if (voteTokenURI !== undefined) {
-      return queueProposalSend(
+      executeProposalSend(
         targets,
         values,
         [encodedFunctionCall],
@@ -60,38 +55,7 @@ function useQueueAndExecuteProposal(
     }
   };
 
-  // if queue transaction is successful, make the execute transaction
-  const { state: executeProposalState, send: executeProposalSend } =
-    useContractFunction(daoContract, "execute", {
-      transactionName: "Execute proposal on Radio",
-    });
-
-  useEffect(() => {
-    if (queueProposalState.status === "Success") {
-      // make the execute transaction
-      executeProposalSend(
-        targets,
-        values,
-        [encodedFunctionCall],
-        descriptionHash
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queueProposalState]);
-
-  // track overall state
-  const [txnState, setTxnState] =
-    useState<TransactionStatus>(queueProposalState);
-
-  useEffect(() => {
-    if (queueProposalState.status === "Success") {
-      setTxnState(executeProposalState);
-    } else {
-      setTxnState(queueProposalState);
-    }
-  }, [queueProposalState, executeProposalState]);
-
-  return { queueAndExecuteProposalState: txnState, queueAndExecuteProposal };
+  return { executeProposalState, executeProposal };
 }
 
-export { useQueueAndExecuteProposal };
+export { useExecuteProposal };
