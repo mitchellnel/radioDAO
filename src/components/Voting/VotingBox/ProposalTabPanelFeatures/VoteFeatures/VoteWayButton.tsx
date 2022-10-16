@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 
 import { CircularProgress } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+
 import { useCastVote } from "../../../../../hooks/radioDAO";
+
 import { ProposalInformation } from "../../../../../types";
 
 interface VoteWayButtonProps {
