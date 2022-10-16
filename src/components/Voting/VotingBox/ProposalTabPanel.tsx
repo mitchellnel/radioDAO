@@ -7,9 +7,8 @@ import { TabPanel } from "@mui/lab";
 import { useProposalVotes } from "../../../hooks/radioDAO";
 
 import NFTModalArt from "../../shared/NFTModalFeatures/NFTModalArt";
-import VoteWayText from "./ProposalTabPanelFeatures/VoteWayText";
-import VoteWayButton from "./ProposalTabPanelFeatures/VoteWayButton";
 import NotificationModal from "../../shared/NotificationModal/NotificationModal";
+import VoteForm from "./ProposalTabPanelFeatures/VoteFeatures/VoteForm";
 
 import ContractAddresses from "../../../constants/ContractAddresses.json";
 import RadioDAOABI from "../../../constants/RadioDAOABI.json";
@@ -110,37 +109,7 @@ function ProposalTabPanel({ proposal }: ProposalTabPanelProps) {
                 <NFTModalArt imageURI={imageURI} />
               </div>
               <div className="flex flex-col basis-1/2 mt-10 gap-y-20">
-                <div className="flex flex-col justify-center">
-                  <VoteWayText
-                    voteWay="FOR"
-                    votes={
-                      proposalVotes ? proposalVotes["forVotes"].toString() : "0"
-                    }
-                  />
-
-                  <VoteWayText
-                    voteWay="AGAINST"
-                    votes={
-                      proposalVotes
-                        ? proposalVotes["againstVotes"].toString()
-                        : "0"
-                    }
-                  />
-
-                  <VoteWayText
-                    voteWay="ABSTAINING"
-                    votes={
-                      proposalVotes
-                        ? proposalVotes["abstainVotes"].toString()
-                        : "0"
-                    }
-                  />
-                </div>
-                <div className="flex flex-row justify-center gap-4">
-                  <VoteWayButton proposal={proposal} voteWay="FOR" />
-                  <VoteWayButton proposal={proposal} voteWay="AGAINST" />
-                  <VoteWayButton proposal={proposal} voteWay="ABSTAIN" />
-                </div>
+                <VoteForm proposal={proposal} proposalVotes={proposalVotes} />
               </div>
             </div>
           </div>
