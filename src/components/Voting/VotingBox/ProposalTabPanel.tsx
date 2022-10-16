@@ -110,7 +110,7 @@ function ProposalTabPanel({ proposal }: ProposalTabPanelProps) {
                 <NFTModalArt imageURI={imageURI} />
               </div>
               <div className="flex flex-col basis-1/2 mt-10 gap-y-20">
-                {proposal.state === 4 ? (
+                {proposal.state === 4 || proposal.state === 5 ? (
                   <QueueExecuteForm proposal={proposal} />
                 ) : (
                   <VoteForm proposal={proposal} proposalVotes={proposalVotes} />
