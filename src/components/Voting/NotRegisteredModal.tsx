@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 
 import { Contract } from "ethers";
-import { Modal, Box, Typography, CircularProgress } from "@mui/material";
+import { useEthers } from "@usedapp/core";
+import {
+  Modal,
+  Button,
+  Box,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
 import { useSelfDelegate } from "../../hooks/radioDAONFT";
@@ -29,6 +36,8 @@ function NotRegisteredModal({
   isVisible,
   nftContract,
 }: NotRegisteredModalProps) {
+  const { activateBrowserWallet } = useEthers();
+
   const [registerBtnLoading, setRegisterBtnLoading] = useState<boolean>(false);
 
   // get function to self delegate voting power
@@ -92,6 +101,16 @@ function NotRegisteredModal({
             >
               Register to Vote
             </LoadingButton>
+          </div>
+          <div className="mt-20">
+            <Button
+              className="connect-btn"
+              variant="contained"
+              color="secondary"
+              onClick={() => activateBrowserWallet()}
+            >
+              Connect
+            </Button>
           </div>
         </div>
       </Box>
