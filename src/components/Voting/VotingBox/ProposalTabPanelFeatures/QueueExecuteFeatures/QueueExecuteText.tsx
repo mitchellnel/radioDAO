@@ -2,7 +2,13 @@ import React from "react";
 
 import { Typography } from "@mui/material";
 
-function QueueExecuteText() {
+import { ProposalInformation } from "../../../../../types";
+
+interface QueueExecuteTextProps {
+  proposal: ProposalInformation;
+}
+
+function QueueExecuteText({ proposal }: QueueExecuteTextProps) {
   return (
     <>
       <Typography
@@ -16,8 +22,8 @@ function QueueExecuteText() {
         fontWeight="300"
         sx={{ width: "400px" }}
       >
-        This proposal has passed. Click the button below to Queue and Execute
-        it.
+        This proposal has passed. Click the button below to{" "}
+        {proposal.state === 4 ? "Queue" : "Execute"} it.
       </Typography>
     </>
   );

@@ -14,7 +14,7 @@ function QueueExecuteForm({ proposal }: QueueExecuteFormProps) {
   return (
     <>
       <div className="flex flex-col">
-        <QueueExecuteText />
+        <QueueExecuteText proposal={proposal} />
       </div>
       <div className="flex flex-row justify-center">
         {proposal.state === 5 ? (
