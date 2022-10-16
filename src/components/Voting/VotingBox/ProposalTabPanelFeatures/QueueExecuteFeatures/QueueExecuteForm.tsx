@@ -1,9 +1,10 @@
 import React from "react";
 
-import QueueExecuteButton from "./QueueExecuteButton";
+import QueueExecuteText from "./QueueExecuteText";
+import QueueButton from "./QueueButton";
 
 import { ProposalInformation } from "../../../../../types";
-import QueueExecuteText from "./QueueExecuteText";
+import ExecuteButton from "./ExecuteButton";
 
 interface QueueExecuteFormProps {
   proposal: ProposalInformation;
@@ -16,7 +17,11 @@ function QueueExecuteForm({ proposal }: QueueExecuteFormProps) {
         <QueueExecuteText />
       </div>
       <div className="flex flex-row justify-center">
-        <QueueExecuteButton proposal={proposal} />
+        {proposal.state === 5 ? (
+          <ExecuteButton proposal={proposal} />
+        ) : (
+          <QueueButton proposal={proposal} />
+        )}
       </div>
     </>
   );
