@@ -397,7 +397,7 @@ const fromWei = (num: BigNumberish) => ethers.utils.formatEther(num);
     - 1 == Active
     - 2 == Cancelled
     - 3 == Defeated
-    - 4 == Suceeded
+    - 4 == Succeeded
     - 5 == Queued
     - 6 == Expired
     - 7 == Executed

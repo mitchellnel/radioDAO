@@ -97,6 +97,7 @@ function CollectionNFTCard({
           nftContract={rdioNFTContract}
           marketplaceContract={marketplaceContract}
           tokenID={tokenID}
+          tokenURI={tokenURI}
           songTitle={songTitle}
           songArtist={songArtist}
           imageURI={imageURI}

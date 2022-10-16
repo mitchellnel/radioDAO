@@ -1,1 +1,5 @@
-export type { SuccessNotification } from "./types";
+export type {
+  SuccessNotification,
+  ProposalInformation,
+  ProposalVotes,
+} from "./types";

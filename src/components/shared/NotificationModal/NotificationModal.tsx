@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-import { Modal, Box, Typography, IconButton, Avatar } from "@mui/material";
+import { Modal, Box, Typography, Link } from "@mui/material";
 
-import CloseIcon from "@mui/icons-material/Close";
+import ModalCloseButton from "../NFTModalFeatures/ModalCloseButton";
+
 import { SuccessNotification } from "../../../types";
+
+const ETHERSCAN_TXN_URL = "https://goerli.etherscan.io/tx/";
 
 const modalBoxStyle = {
   position: "absolute" as "absolute",
@@ -50,6 +53,16 @@ function NotificationModal({
       setDisplayMsg(
         "You have successfully delisted your RadioDAO NFT from the marketplace!"
       );
+    } else if (txnName === "Self Delegate") {
+      setDisplayMsg("You have successfully registered to vote!");
+    } else if (txnName === "Propose to Queue Song") {
+      setDisplayMsg("You have succesfully proposed a song to be queued!");
+    } else if (txnName === "Cast a vote on a proposal") {
+      setDisplayMsg("You have successfully cast your vote on a proposal!");
+    } else if (txnName === "Queue proposal to RadioDAO") {
+      setDisplayMsg("You have successfully queued the proposal!");
+    } else if (txnName === "Execute proposal on Radio") {
+      setDisplayMsg("You have successfulyl executed the proposal!");
     }
   }, [txnName]);
 
@@ -94,27 +107,19 @@ function NotificationModal({
               fontFamily="Outfit"
               fontWeight="600"
             >
-              Your transaction hash is: {txnHash}
+              Your transaction hash is:{" "}
+              <Link
+                href={ETHERSCAN_TXN_URL + txnHash}
+                color="inherit"
+                sx={{ "&:hover": { color: "#af9f6a" } }}
+              >
+                {txnHash}
+              </Link>
             </Typography>
           </div>
-          <IconButton
-            className="self-start"
-            aria-label="close-modal"
-            color="secondary"
-            onClick={onClose}
-            sx={{ "&:hover": { backgroundColor: "rgb(232, 189, 48, 0.4)" } }}
-          >
-            <Avatar
-              sx={{
-                bgcolor: "secondary.main",
-                color: "primary.main",
-                height: 40,
-                width: 40,
-              }}
-            >
-              <CloseIcon sx={{ fontSize: "1.5rem" }} />
-            </Avatar>
-          </IconButton>
+          <div className="self-start">
+            <ModalCloseButton onClick={onClose} />
+          </div>
         </div>
       </Box>
     </Modal>

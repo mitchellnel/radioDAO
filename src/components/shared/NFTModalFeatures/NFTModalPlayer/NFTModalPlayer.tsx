@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 
-import ModalPlayerControls from "./ModalPlayerControls";
+import NFTModalPlayerControls from "./NFTModalPlayerControls";
 import useAudioPlayer from "../../../../hooks/useAudioplayer";
 import DynamicAudio from "../../../Main/DynamicAudio/DynamicAudio";
 
-interface ModalPlayerProps {
+interface NFTModalPlayerProps {
   audioURI: string;
 }
 
-function ModalPlayer({ audioURI }: ModalPlayerProps) {
+function NFTModalPlayer({ audioURI }: NFTModalPlayerProps) {
   const [sliderPosition, setSliderPosition] = useState<number>(0);
   const [isSliding, setSlidingFlag] = useState<boolean>(false);
 
@@ -45,7 +45,7 @@ function ModalPlayer({ audioURI }: ModalPlayerProps) {
   return (
     <div className="">
       <DynamicAudio songSrc={audioURI} />
-      <ModalPlayerControls
+      <NFTModalPlayerControls
         currentlyPlaying={playing as boolean}
         songDuration={Math.round(duration as number)}
         sliderPosition={sliderPosition}
@@ -56,4 +56,4 @@ function ModalPlayer({ audioURI }: ModalPlayerProps) {
   );
 }
 
-export default ModalPlayer;
+export default NFTModalPlayer;

@@ -1,19 +1,16 @@
-import { useCall } from "@usedapp/core";
-import { Contract, utils } from "ethers";
+import { useCall, useEthers } from "@usedapp/core";
+import { BigNumber, constants, Contract, utils } from "ethers";
 
-function useTokenURI(
-  nftABI: any,
-  nftAddress: string,
-  tokenID: number
-): string | undefined {
+function useGetVotes(nftABI: any, nftAddress: string): BigNumber | undefined {
+  const { account } = useEthers();
   const nftInterface = new utils.Interface(nftABI);
   const nftContract = new Contract(nftAddress, nftInterface);
 
   const { value, error } =
     useCall({
       contract: nftContract,
-      method: "tokenURI",
-      args: [tokenID],
+      method: "getVotes",
+      args: [account ? account : constants.AddressZero],
     }) ?? {};
 
   if (error) {
@@ -28,4 +25,4 @@ function useTokenURI(
   else return value;
 }
 
-export { useTokenURI };
+export { useGetVotes };
