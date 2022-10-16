@@ -1,7 +1,7 @@
 import React from "react";
 
-import VoteWayButton from "../VoteWayButton";
-import VoteWayText from "../VoteWayText";
+import VoteWayButton from "./VoteWayButton";
+import VoteWayText from "./VoteWayText";
 
 import { ProposalInformation, ProposalVotes } from "../../../../../types";
 
