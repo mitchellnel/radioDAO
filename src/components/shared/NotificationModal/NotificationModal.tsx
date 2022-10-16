@@ -59,6 +59,10 @@ function NotificationModal({
       setDisplayMsg("You have succesfully proposed a song to be queued!");
     } else if (txnName === "Cast a vote on a proposal") {
       setDisplayMsg("You have successfully cast your vote on a proposal!");
+    } else if (txnName === "Queue proposal to RadioDAO") {
+      setDisplayMsg("You have successfully queued the proposal!");
+    } else if (txnName === "Execute proposal on Radio") {
+      setDisplayMsg("You have successfulyl executed the proposal!");
     }
   }, [txnName]);
 
