@@ -42,11 +42,11 @@ function VotingTabs() {
             centered
           >
             {proposals.length === 0 ||
-            proposals.filter((proposal) => proposal.state === 3).length !==
+            proposals.filter((proposal) => proposal.state === 1).length !==
               0 ? (
               // eslint-disable-next-line array-callback-return
               proposals?.map((proposal) => {
-                if (proposal.state === 3) {
+                if (proposal.state === 1) {
                   const value = String(proposal.id);
 
                   return (
@@ -64,10 +64,10 @@ function VotingTabs() {
           </TabList>
         </Box>
         {proposals.length === 0 ||
-        proposals.filter((proposal) => proposal.state === 3).length !== 0 ? (
+        proposals.filter((proposal) => proposal.state === 1).length !== 0 ? (
           // eslint-disable-next-line array-callback-return
           proposals?.map((proposal) => {
-            if (proposal.state === 3) {
+            if (proposal.state === 1) {
               const value = String(proposal.id);
 
               return <ProposalTabPanel key={value} proposal={proposal} />;

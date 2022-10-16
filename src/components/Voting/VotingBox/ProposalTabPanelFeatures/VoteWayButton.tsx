@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 
 import { CircularProgress } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+import { useCastVote } from "../../../../hooks/radioDAO";
+import { ProposalInformation } from "../../../../types";
 
 interface VoteWayButtonProps {
+  proposal: ProposalInformation;
   voteWay: string;
 }
 
-function VoteWayButton({ voteWay }: VoteWayButtonProps) {
+function VoteWayButton({ proposal, voteWay }: VoteWayButtonProps) {
   const [buttonColor, setButtonColor] = useState<
     "inherit" | "voteFor" | "voteAgainst" | "voteAbstain"
   >("inherit");
@@ -32,14 +35,24 @@ function VoteWayButton({ voteWay }: VoteWayButtonProps) {
   const [voteBtnLoading, setVoteBtnLoading] = useState<boolean>(false);
 
   // get function to cast vote
-  // TODO
+  const { castVoteState, castVote } = useCastVote(proposal.id);
 
   // handler for when the vote button is pressed
   const handleVoteButtonClick = async () => {
-    console.log("Casting a", voteWay, "vote!");
+    castVote(voteWay);
   };
 
-  // use transaction states to set vote button states
+  // use transaction states to set loading button state
+  useEffect(() => {
+    if (
+      castVoteState.status === "PendingSignature" ||
+      castVoteState.status === "Mining"
+    ) {
+      setVoteBtnLoading(true);
+    } else {
+      setVoteBtnLoading(false);
+    }
+  }, [castVoteState]);
 
   return (
     <>

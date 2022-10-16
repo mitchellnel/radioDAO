@@ -105,9 +105,9 @@ function ProposalTabPanel({ proposal }: ProposalTabPanelProps) {
                 />
               </div>
               <div className="flex flex-row justify-center gap-4">
-                <VoteWayButton voteWay="FOR" />
-                <VoteWayButton voteWay="AGAINST" />
-                <VoteWayButton voteWay="ABSTAIN" />
+                <VoteWayButton proposal={proposal} voteWay="FOR" />
+                <VoteWayButton proposal={proposal} voteWay="AGAINST" />
+                <VoteWayButton proposal={proposal} voteWay="ABSTAIN" />
               </div>
             </div>
           </div>
