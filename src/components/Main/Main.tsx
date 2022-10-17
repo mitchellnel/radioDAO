@@ -1,20 +1,29 @@
 import React, { useEffect, useState } from "react";
 import "./Main.css";
 
+import { useEthers } from "@usedapp/core";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import { SwitchTransition, CSSTransition } from "react-transition-group";
+
+import useAudioPlayer from "../../hooks/useAudioplayer";
+import {
+  useGetActiveSong,
+  useGetNextSong,
+  useGetPrevSong,
+} from "../../hooks/radio";
+
 import DynamicAudio from "./DynamicAudio/DynamicAudio";
 import PlayerArt from "./PlayerArt/PlayerArt";
 import PlayerDetails from "./PlayerDetails/PlayerDetails";
 import PlayerControls from "./PlayerControls/PlayerControls";
 
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-
-import { SwitchTransition, CSSTransition } from "react-transition-group";
-
 import songs from "../../assets/songs";
 import { Song } from "../../assets/songs";
-import useAudioPlayer from "../../hooks/useAudioplayer";
+import RadioABI from "../../constants/RadioABI.json";
+import ContractAddresses from "../../constants/ContractAddresses.json";
+import { RadioDAONFTMetadata } from "../../../scripts/types";
 
 function Main() {
   const [sliderPosition, setSliderPosition] = useState<number>(0);
@@ -37,8 +46,6 @@ function Main() {
   } = useAudioPlayer();
 
   useEffect(() => {
-    console.log(currentTime);
-
     if (!isSliding) {
       setSliderPosition(Math.round(currentTime as number));
     }
@@ -48,7 +55,7 @@ function Main() {
     setPlayingFlag(playSongFlag);
   };
 
-  const prevSong = (): void => {
+  const handlePrevClick = (): void => {
     if (songNumber === 0) {
       setSongNumber(15);
     } else {
@@ -56,7 +63,7 @@ function Main() {
     }
   };
 
-  const nextSong = (): void => {
+  const handleNextClick = (): void => {
     setSongNumber((songNumber + 1) % songs.length);
   };
 
@@ -75,8 +82,6 @@ function Main() {
   };
 
   useEffect(() => {
-    console.log("songNumber: ", songNumber);
-
     const nextSong: Song = {
       title: songs[songNumber].title,
       artist: songs[songNumber].artist,
@@ -87,13 +92,89 @@ function Main() {
     setSong(nextSong);
   }, [songNumber]);
 
+  // state variables for NFT metadata URI
+  const [activeSongURI, setActiveSongURI] = useState<string>("");
+  const [nextSongURI, setNextSongURI] = useState<string>("");
+  const [prevSongURI, setPrevSongURI] = useState<string>("");
+
+  // get radio ABI and address
+  const { chainId } = useEthers();
+  const networkName = chainId === 5 ? "goerli" : "localhost";
+
+  const radioABI = RadioABI["abi"];
+  const radioAddress = ContractAddresses[networkName]["Radio"];
+
+  // get NFT metadata URIs from the radio contract
+  const activeSong = useGetActiveSong(radioABI, radioAddress);
+  const nextSong = useGetNextSong(radioABI, radioAddress);
+  const prevSong = useGetPrevSong(radioABI, radioAddress);
+
+  useEffect(() => {
+    if (activeSong !== undefined) {
+      setActiveSongURI(activeSong);
+    }
+
+    if (nextSong !== undefined) {
+      setNextSongURI(nextSong);
+    }
+
+    if (prevSong !== undefined) {
+      setPrevSongURI(prevSong);
+    }
+  }, [activeSong, nextSong, prevSong]);
+
+  // state variables for active song data
+  const [activeSongData, setActiveSongData] = useState<Song>();
+
+  // set song data whenever we get a new active song
+  useEffect(() => {
+    if (activeSongURI !== undefined) {
+      const updateActiveSong = async () => {
+        const requestURL = activeSongURI
+          .toString()
+          .replace("ipfs://", "https://ipfs.io/ipfs/");
+        const tokenURIResponse: RadioDAONFTMetadata = await (
+          await fetch(requestURL)
+        ).json();
+
+        const song: Song = {
+          title: tokenURIResponse.title,
+          artist: tokenURIResponse.artist,
+          imgSrc: tokenURIResponse.image.replace(
+            "ipfs://",
+            "https://ipfs.io/ipfs/"
+          ),
+          src: tokenURIResponse.audio.replace(
+            "ipfs://",
+            "https://ipfs.io/ipfs/"
+          ),
+        };
+
+        setActiveSongData(song);
+      };
+
+      updateActiveSong();
+    }
+  }, [activeSongURI]);
+
+  // set song to play whenever we get a new active song
+  useEffect(() => {
+    if (activeSongData !== undefined) {
+      setPlayingFlag(true);
+    }
+  }, [activeSongData]);
+
   return (
     <div className="player-div">
-      <DynamicAudio songSrc={song.src} />
+      <DynamicAudio songSrc={activeSongData ? activeSongData.src : ""} />
 
       <SwitchTransition>
         <CSSTransition
-          key={song.title + " -- " + song.artist}
+          key={
+            activeSongData
+              ? activeSongData.title + " -- " + activeSongData.artist
+              : "ttt--aaa"
+          }
           addEndListener={(node, done) =>
             node.addEventListener("transitionend", done, false)
           }
@@ -106,7 +187,9 @@ function Main() {
                   id="art"
                   style={{ display: "table", margin: "64px auto 0 120px" }}
                 >
-                  <PlayerArt artSrc={song.imgSrc} />
+                  <PlayerArt
+                    artSrc={activeSongData ? activeSongData.imgSrc : ""}
+                  />
                 </div>
               </Col>
               <Col>
@@ -119,8 +202,8 @@ function Main() {
                     style={{ display: "table", margin: "264px auto 0" }}
                   >
                     <PlayerDetails
-                      songTitle={song.title}
-                      artist={song.artist}
+                      songTitle={activeSongData ? activeSongData.title : ""}
+                      artist={activeSongData ? activeSongData.artist : ""}
                     />
                   </div>
                   <div
@@ -136,8 +219,8 @@ function Main() {
                       sliderPosition={sliderPosition}
                       handlePlayPauseClick={togglePlay}
                       handleTimeUpdate={updateTime}
-                      prevSong={prevSong}
-                      nextSong={nextSong}
+                      prevSong={handlePrevClick}
+                      nextSong={handleNextClick}
                       handleMuteClick={toggleMute}
                     />
                   </div>
