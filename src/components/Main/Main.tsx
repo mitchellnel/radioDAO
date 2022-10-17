@@ -17,7 +17,7 @@ import {
 import DynamicAudio from "./DynamicAudio/DynamicAudio";
 import PlayerArt from "./PlayerArt/PlayerArt";
 import PlayerDetails from "./PlayerDetails/PlayerDetails";
-import PlayerControls from "./PlayerControls/PlayerControls";
+import RadioControls from "./PlayerControls/RadioControls";
 
 import { Song } from "../../assets/songs";
 import RadioABI from "../../constants/RadioABI.json";
@@ -26,7 +26,6 @@ import { RadioDAONFTMetadata } from "../../../scripts/types";
 
 function Main() {
   const [sliderPosition, setSliderPosition] = useState<number>(0);
-  const [isSliding, setSlidingFlag] = useState<boolean>(false);
 
   const {
     playing,
@@ -38,15 +37,14 @@ function Main() {
     clickedTime,
     setPlayingFlag,
     setMutedFlag,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setClickedTime,
   } = useAudioPlayer();
 
   // move slider as the song plays
   useEffect(() => {
-    if (!isSliding) {
-      setSliderPosition(Math.round(currentTime as number));
-    }
-  }, [currentTime, isSliding]);
+    setSliderPosition(Math.round(currentTime as number));
+  }, [currentTime]);
 
   // mute button handler
   const toggleMute = (muteSongFlag: boolean): void => {
@@ -123,6 +121,7 @@ function Main() {
     if (activeSongData !== undefined) {
       setPlayingFlag(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSongData]);
 
   return (
@@ -174,14 +173,10 @@ function Main() {
                       margin: "80px auto 0",
                     }}
                   >
-                    <PlayerControls
+                    <RadioControls
                       currentlyPlaying={playing as boolean}
                       songDuration={Math.round(duration as number)}
                       sliderPosition={sliderPosition}
-                      handlePlayPauseClick={() => {}}
-                      handleTimeUpdate={() => {}}
-                      prevSong={() => {}}
-                      nextSong={() => {}}
                       handleMuteClick={toggleMute}
                     />
                   </div>
