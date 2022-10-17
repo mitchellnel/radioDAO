@@ -19,7 +19,6 @@ import PlayerArt from "./PlayerArt/PlayerArt";
 import PlayerDetails from "./PlayerDetails/PlayerDetails";
 import PlayerControls from "./PlayerControls/PlayerControls";
 
-import songs from "../../assets/songs";
 import { Song } from "../../assets/songs";
 import RadioABI from "../../constants/RadioABI.json";
 import ContractAddresses from "../../constants/ContractAddresses.json";
@@ -28,9 +27,6 @@ import { RadioDAONFTMetadata } from "../../../scripts/types";
 function Main() {
   const [sliderPosition, setSliderPosition] = useState<number>(0);
   const [isSliding, setSlidingFlag] = useState<boolean>(false);
-
-  const [songNumber, setSongNumber] = useState<number>(0);
-  const [song, setSong] = useState<Song>(songs[0]);
 
   const {
     playing,
@@ -45,52 +41,17 @@ function Main() {
     setClickedTime,
   } = useAudioPlayer();
 
+  // move slider as the song plays
   useEffect(() => {
     if (!isSliding) {
       setSliderPosition(Math.round(currentTime as number));
     }
   }, [currentTime, isSliding]);
 
-  const togglePlay = (playSongFlag: boolean): void => {
-    setPlayingFlag(playSongFlag);
-  };
-
-  const handlePrevClick = (): void => {
-    if (songNumber === 0) {
-      setSongNumber(15);
-    } else {
-      setSongNumber((songNumber - 1) % songs.length);
-    }
-  };
-
-  const handleNextClick = (): void => {
-    setSongNumber((songNumber + 1) % songs.length);
-  };
-
-  const updateTime = (commitChange: boolean, newTime: number): void => {
-    if (commitChange) {
-      setClickedTime(newTime);
-      setSlidingFlag(false);
-    } else {
-      setSlidingFlag(true);
-      setSliderPosition(Math.round(newTime));
-    }
-  };
-
+  // mute button handler
   const toggleMute = (muteSongFlag: boolean): void => {
     setMutedFlag(muteSongFlag);
   };
-
-  useEffect(() => {
-    const nextSong: Song = {
-      title: songs[songNumber].title,
-      artist: songs[songNumber].artist,
-      imgSrc: songs[songNumber].imgSrc,
-      src: songs[songNumber].src,
-    };
-
-    setSong(nextSong);
-  }, [songNumber]);
 
   // state variables for NFT metadata URI
   const [activeSongURI, setActiveSongURI] = useState<string>("");
@@ -217,10 +178,10 @@ function Main() {
                       currentlyPlaying={playing as boolean}
                       songDuration={Math.round(duration as number)}
                       sliderPosition={sliderPosition}
-                      handlePlayPauseClick={togglePlay}
-                      handleTimeUpdate={updateTime}
-                      prevSong={handlePrevClick}
-                      nextSong={handleNextClick}
+                      handlePlayPauseClick={() => {}}
+                      handleTimeUpdate={() => {}}
+                      prevSong={() => {}}
+                      nextSong={() => {}}
                       handleMuteClick={toggleMute}
                     />
                   </div>
