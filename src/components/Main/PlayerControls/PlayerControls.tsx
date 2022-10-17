@@ -52,7 +52,7 @@ function PlayerControls({
 
   return (
     <>
-      <div id="slider" style={{ margin: "16px -56px" }}>
+      <div id="slider" style={{ margin: "16px -150px" }}>
         <PlayerSlider
           duration={songDuration}
           currentTime={sliderPosition}
@@ -62,20 +62,17 @@ function PlayerControls({
         />
       </div>
 
-      <div id="control-buttons">
-        {/* TODO: remove for actual radio app */}
+      {/* <div id="control-buttons">
         <PrevButton onClick={clickPrev} />
 
-        {/* TODO: make this a mute button for radio app */}
         {isPlaying ? (
           <PauseButton onClick={clickPlayPause} />
         ) : (
           <PlayButton onClick={clickPlayPause} />
         )}
 
-        {/* TODO: remove for actual radio app */}
         <NextButton onClick={clickNext} />
-      </div>
+      </div> */}
 
       <div id="mute-button" className="mt-3">
         {isMuted ? (
