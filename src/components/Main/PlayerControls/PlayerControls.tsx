@@ -62,7 +62,7 @@ function PlayerControls({
         />
       </div>
 
-      {/* <div id="control-buttons">
+      <div id="control-buttons">
         <PrevButton onClick={clickPrev} />
 
         {isPlaying ? (
@@ -72,7 +72,7 @@ function PlayerControls({
         )}
 
         <NextButton onClick={clickNext} />
-      </div> */}
+      </div>
 
       <div id="mute-button" className="mt-3">
         {isMuted ? (
