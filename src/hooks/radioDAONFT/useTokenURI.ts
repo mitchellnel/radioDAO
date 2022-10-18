@@ -20,10 +20,6 @@ function useTokenURI(
     return undefined;
   }
 
-  if (error) {
-    return undefined;
-  }
-
   if (value !== undefined) return value[0];
   else return value;
 }
